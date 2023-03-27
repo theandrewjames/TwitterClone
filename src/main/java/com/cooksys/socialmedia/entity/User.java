@@ -27,4 +27,8 @@ public class User {
     private String lastName;
     private String email;
     private String phone;
+    @Embedded
+    Credentials credentials;
+    @Embedded
+    Profile profile;
 }
