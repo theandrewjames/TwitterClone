@@ -1,14 +1,16 @@
 package com.cooksys.socialmedia.controller;
 
-import com.cooksys.socialmedia.dto.HashtagResponseDto;
-import com.cooksys.socialmedia.dto.TweetResponseDto;
-import com.cooksys.socialmedia.services.HashtagService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.cooksys.socialmedia.dto.HashtagResponseDto;
+import com.cooksys.socialmedia.dto.TweetResponseDto;
+import com.cooksys.socialmedia.services.HashtagService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +27,6 @@ public class HashtagController {
     public List<TweetResponseDto> getTweetsByHashtagLabel() {
         return hashtagService.getTweetsByHashtagLabel();
     }
-
-
+    	
 }
+
