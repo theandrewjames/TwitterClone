@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -13,13 +14,27 @@ public class Tweet {
     @Id
     @GeneratedValue
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Integer author;
+    private User user;
+
     @Column(updatable = false, insertable = true)
     private Timestamp posted;
+
     private Boolean deleted = false;
+
     private String content;
-    private Integer inReplyTo;
-    private Integer repostOf;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User inReplyTo;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User repostOf;
+
+    @ManyToMany
+    @JoinColumn(name = "hashtag_id")
+    private List<Hashtag> hashtags;
 }
