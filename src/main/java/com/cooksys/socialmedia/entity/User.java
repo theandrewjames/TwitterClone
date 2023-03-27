@@ -1,4 +1,4 @@
-package com.cooksys.socialmedia.entities;
+package com.cooksys.socialmedia.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,13 +17,13 @@ public class User {
 
     @Id
     @GeneratedValue
-   private Long id;
-   private String username;
-   private String password;
-   private Timestamp joined;
-   private Boolean deleted = false;
-   private String firstName;
-   private String lastName;
-   private String email;
-   private String phone;
+    private Long id;
+    private String username;
+    private String password;
+    private Timestamp joined;
+    private Boolean deleted = false;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
 }
