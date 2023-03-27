@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -14,8 +15,6 @@ public class User {
 
     @Id
     @GeneratedValue
-
-    @OneToMany(mappedBy = "user")
     private Long id;
     @Column(unique = true)
     private String username;
@@ -27,6 +26,10 @@ public class User {
     private String lastName;
     private String email;
     private String phone;
+
+    @OneToMany(mappedBy = "tweet")
+    private List<Tweet> tweets;
+
     @Embedded
     Credentials credentials;
     @Embedded

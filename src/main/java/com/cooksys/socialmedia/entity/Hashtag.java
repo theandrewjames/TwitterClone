@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -13,6 +14,7 @@ public class Hashtag {
     @Id
     @GeneratedValue
     private Long id;
+
     @Column(unique=true)
     private String label;
 
@@ -21,5 +23,11 @@ public class Hashtag {
 
     @Column(updatable = true)
     private Timestamp lastUsed;
+
+    @ManyToMany
+    @JoinColumn(name = "tweet_id")
+    private List<Tweet> tweets;
+
+
 
 }
