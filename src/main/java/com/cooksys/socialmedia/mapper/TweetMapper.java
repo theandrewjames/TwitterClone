@@ -1,5 +1,5 @@
 package com.cooksys.socialmedia.mapper;
 
-public class TweetMapper {
+public interface TweetMapper {
 
 }
