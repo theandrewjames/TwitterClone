@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 @Data
 @Table(name="user_table")
 public class User {
+
     @Id
     @GeneratedValue
    private Long id;
