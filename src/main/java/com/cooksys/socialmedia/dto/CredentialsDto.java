@@ -5,10 +5,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class UserRequestDto {
+public class CredentialsDto {
 	
-	private CredentialsDto credentials;
+	private String username;
 	
-	private ProfileDto profile;
+	private String password;
+	
 
 }

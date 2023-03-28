@@ -1,14 +1,20 @@
 package com.cooksys.socialmedia.entity;
 
-import jakarta.persistence.*;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 
 @Entity
 @NoArgsConstructor
@@ -18,16 +24,16 @@ public class Hashtag {
 	@GeneratedValue
 	private Long id;
 
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String label;
 
-	@Column(updatable = false, insertable = true)
+	@CreationTimestamp
 	private Timestamp firstUsed;
 
-	@Column(updatable = true)
+	@UpdateTimestamp
 	private Timestamp lastUsed;
 
-	@ManyToMany(mappedBy = "hashtags")
-	private Set<Tweet> tweets = new HashSet<>();
+	@ManyToMany(mappedBy = "hashtags", cascade = CascadeType.ALL)
+	private List<Tweet> tweets = new ArrayList<>();
 
 }
