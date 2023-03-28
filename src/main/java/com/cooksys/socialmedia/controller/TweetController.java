@@ -12,7 +12,7 @@ import com.cooksys.socialmedia.dto.TweetResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("tweets")
+@RequestMapping("/tweets")
 @RequiredArgsConstructor
 public class TweetController {
 

@@ -1,13 +1,22 @@
 package com.cooksys.socialmedia.entity;
 
-import jakarta.persistence.*;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -18,13 +27,13 @@ public class Tweet {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	@JoinColumn(name = "author_id")
+	private User author;
 
-	@Column(updatable = false, insertable = true)
+	@CreationTimestamp
 	private Timestamp posted;
 
-	private Boolean deleted;
+	private Boolean deleted = false;
 
 	private String content;
 	
@@ -42,14 +51,22 @@ public class Tweet {
 	@OneToMany(mappedBy = "repostOf")
 	private List<Tweet> reposts; 
 	
-	@ManyToMany(mappedBy = "reposted_tweets")
-	private Set<User> user_mentions  = new HashSet<>();
+	@ManyToMany(cascade=CascadeType.MERGE)
+	@JoinTable(
+			name="user_mentions", 
+			joinColumns = @JoinColumn(name="tweet_id"),
+			inverseJoinColumns=@JoinColumn(name="user_id")
+			)
+	private List<User> mentionedUsers  = new ArrayList<>();
 	
-	@ManyToMany(mappedBy = "liked_tweets")
-	private Set<User> user_likes  = new HashSet<>();
+	@ManyToMany(mappedBy = "likedTweets")
+	private List<User> likedByUsers = new ArrayList<>();
 
 	@ManyToMany
-    @JoinTable(name = "tweet_hashtags",
-        joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
-    private Set<Hashtag> hashtags = new HashSet<>();
+	@JoinTable(
+			name="tweet_hashtags", 
+			joinColumns = @JoinColumn(name="tweet_id"),
+			inverseJoinColumns=@JoinColumn(name="hashtag_id")
+			)
+    private List<Hashtag> hashtags = new ArrayList<>();
 }

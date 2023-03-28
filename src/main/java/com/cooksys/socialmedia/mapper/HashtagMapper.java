@@ -1,24 +1,18 @@
 package com.cooksys.socialmedia.mapper;
 
-import com.cooksys.socialmedia.dto.HashtagRequestDto;
-import com.cooksys.socialmedia.dto.HashtagResponseDto;
-import com.cooksys.socialmedia.entity.Hashtag;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
+import com.cooksys.socialmedia.dto.HashtagDto;
+import com.cooksys.socialmedia.entity.Hashtag;
 
 @Mapper(componentModel = "spring")
 public interface HashtagMapper {
-    HashtagResponseDto hashtagEntityToResponseDto (Hashtag hashtag);
-    List<HashtagResponseDto> hashtagEntitiesToResponseDtos (List<Hashtag> hashtags);
-    Hashtag hashtagRequestDtoToEntity (HashtagRequestDto hashtagRequestDto);    
-    default LocalDateTime map(Timestamp timestamp ) {
-    	 return timestamp.toLocalDateTime();
-    }
-    default Timestamp map(LocalDateTime localDateTime) {
-		return Timestamp.valueOf(localDateTime);
-    }
+	HashtagDto hashtagEntityToResponseDto(Hashtag hashtag);
+
+	List<HashtagDto> entitiesToDtos(List<Hashtag> hashtags);
+
+	Hashtag dtoToEntity(HashtagDto hashtagDto);
 
 }

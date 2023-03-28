@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cooksys.socialmedia.dto.HashtagResponseDto;
+import com.cooksys.socialmedia.dto.HashtagDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.services.HashtagService;
 
@@ -17,17 +17,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/tags")
 public class HashtagController {
-    private HashtagService hashtagService;
+	private HashtagService hashtagService;
 
-    @GetMapping
-    public List<HashtagResponseDto> getAllTags() {
-        return hashtagService.getAllTags();
-    }
+	@GetMapping
+	public List<HashtagDto> getAllTags() {
+		return hashtagService.getAllTags();
+	}
 
-    @GetMapping("/{label}")
-    public List<TweetResponseDto> getTweetsByHashtagLabel(@PathVariable String label) {
-        return hashtagService.getTweetsByHashtagLabel(label);
-    }
-    	
+	@GetMapping("/{label}")
+	public List<TweetResponseDto> getTweetsByHashtagLabel(@PathVariable String label) {
+		return hashtagService.getTweetsByHashtagLabel(label);
+	}
+
 }
-
