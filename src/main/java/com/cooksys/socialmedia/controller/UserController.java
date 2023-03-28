@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("users")
 @RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
 	@GetMapping("/@{username}")
@@ -32,8 +33,8 @@ public class UserController {
 		return null;
 	}
 
-	@GetMapping("/@{username}")
-	public UserResponseDto getAllTweetsByUsername(@PathVariable String username) {
+	@GetMapping("/@{username}/feed")
+	public TweetResponseDto getAllTweetsByUsername(@PathVariable String username) {
 		return null;
 	}
 

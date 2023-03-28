@@ -5,29 +5,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
 @Data
 public class Hashtag {
-    @Id
-    @GeneratedValue
-    private Long id;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    @Column(unique=true)
-    private String label;
+	@Column(unique = true)
+	private String label;
 
-    @Column(updatable = false, insertable = true)
-    private Timestamp firstUsed;
+	@Column(updatable = false, insertable = true)
+	private Timestamp firstUsed;
 
-    @Column(updatable = true)
-    private Timestamp lastUsed;
+	@Column(updatable = true)
+	private Timestamp lastUsed;
 
-    @ManyToMany
-    @JoinColumn(name = "tweet_id")
-    private List<Tweet> tweets;
-
-
+	@ManyToMany(mappedBy = "hashtags")
+	private Set<Tweet> tweets = new HashSet<>();
 
 }
