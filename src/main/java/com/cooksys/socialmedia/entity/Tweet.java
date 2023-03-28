@@ -28,12 +28,25 @@ public class Tweet {
 
 	private String content;
 	
-	@OneToOne
+	@ManyToOne
+	@JoinColumn(name = "inReplyTo")
 	private Tweet inReplyTo;
 	
-	@OneToOne
+	@OneToMany(mappedBy = "inReplyTo")
+	private List<Tweet> replies; 
+	
+	@ManyToOne
+	@JoinColumn(name = "repostOf")
 	private Tweet repostOf;
-
+	
+	@OneToMany(mappedBy = "repostOf")
+	private List<Tweet> reposts; 
+	
+	@ManyToMany(mappedBy = "reposted_tweets")
+	private Set<User> user_mentions  = new HashSet<>();
+	
+	@ManyToMany(mappedBy = "liked_tweets")
+	private Set<User> user_likes  = new HashSet<>();
 
 	@ManyToMany
     @JoinTable(name = "tweet_hashtags",
