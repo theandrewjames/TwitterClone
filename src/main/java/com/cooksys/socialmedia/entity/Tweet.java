@@ -27,16 +27,15 @@ public class Tweet {
 	private Boolean deleted;
 
 	private String content;
+	
+	@OneToOne
+	private Tweet inReplyTo;
+	
+	@OneToOne
+	private Tweet repostOf;
 
-	//@OneToOne
-	//@JoinColumn(name = "tweet_id")
-	//private Tweet inReplyTo;
 
-	//@OneToOne
-	//@JoinColumn(name = "tweet_id")
-	//private Tweet repostOf;
-
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToMany
     @JoinTable(name = "tweet_hashtags",
         joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
     private Set<Hashtag> hashtags = new HashSet<>();

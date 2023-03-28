@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="user_table")
@@ -30,6 +32,16 @@ public class User {
     private Boolean deleted = false;
 
     @OneToMany(mappedBy = "user")
-    private List<Tweet> tweets;
+    private List<Tweet> user_tweets;    
+
+    
+	@OneToMany
+	@JoinTable(name = "user_mentions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
+	private Set<Tweet> reposted_tweets = new HashSet<>();
+	
+	@OneToMany
+	@JoinTable(name = "user_likes", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
+	private Set<Tweet> liked_tweets = new HashSet<>();
+
 
 }
