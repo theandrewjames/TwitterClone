@@ -3,6 +3,7 @@ package com.cooksys.socialmedia.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +25,8 @@ public class HashtagController {
     }
 
     @GetMapping("/{label}")
-    public List<TweetResponseDto> getTweetsByHashtagLabel() {
-        return hashtagService.getTweetsByHashtagLabel();
+    public List<TweetResponseDto> getTweetsByHashtagLabel(@PathVariable String label) {
+        return hashtagService.getTweetsByHashtagLabel(label);
     }
     	
 }

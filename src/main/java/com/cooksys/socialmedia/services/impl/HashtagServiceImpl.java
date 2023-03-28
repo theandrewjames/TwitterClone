@@ -18,7 +18,7 @@ public class HashtagServiceImpl implements HashtagService {
     private final HashtagRepository hashtagRepository;
     private final HashtagMapper hashtagMapper;
 	@Override
-	public List<TweetResponseDto> getTweetsByHashtagLabel() {
+	public List<TweetResponseDto> getTweetsByHashtagLabel(String label) {
 		// TODO Auto-generated method stub
 		return null;
 	}

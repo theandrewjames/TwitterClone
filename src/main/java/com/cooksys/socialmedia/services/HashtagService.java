@@ -6,7 +6,7 @@ import com.cooksys.socialmedia.dto.TweetResponseDto;
 import java.util.List;
 
 public interface HashtagService {
-    List<TweetResponseDto> getTweetsByHashtagLabel();
+    List<TweetResponseDto> getTweetsByHashtagLabel(String label);
 
     List<HashtagResponseDto> getAllTags();
 }
