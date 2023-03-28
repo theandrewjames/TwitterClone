@@ -8,30 +8,28 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
+@Table(name="user_table")
 @NoArgsConstructor
 @Data
-@Table(name="user_table")
 public class User {
 
     @Id
     @GeneratedValue
     private Long id;
-    @Column(unique = true)
-    private String username;
-    private String password;
-    @Column(updatable = false, insertable = true)
+    
+    @Embedded
+    private Credentials credentials;
+    
+    @Embedded
+    private Profile profile;    
+  
+    
+    @Column(insertable = true, updatable = false)
     private Timestamp joined;
+    
     private Boolean deleted = false;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phone;
 
-    @OneToMany(mappedBy = "tweet")
+    @OneToMany(mappedBy = "user")
     private List<Tweet> tweets;
 
-    @Embedded
-    Credentials credentials;
-    @Embedded
-    Profile profile;
 }
