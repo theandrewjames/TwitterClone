@@ -12,4 +12,6 @@ public interface TweetService  {
 
 	TweetResponseDto deleteTweetById(Long id, Credentials credentials);
 
+	TweetResponseDto getTweetContextById(Long id);
+
 }

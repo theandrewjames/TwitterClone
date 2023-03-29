@@ -73,4 +73,10 @@ public class TweetServiceImpl implements TweetService {
 		}
 	}
 
+	@Override
+	public TweetResponseDto getTweetContextById(Long id) {
+		getTweetById(id);
+		return null;
+	}
+
 }

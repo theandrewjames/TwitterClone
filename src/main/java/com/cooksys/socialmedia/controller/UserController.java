@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
+import com.cooksys.socialmedia.entity.Credentials;
 import com.cooksys.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,8 +39,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("/@{username}")
-	public UserResponseDto deleteUserByUsername(@PathVariable String username) {
-		return null;
+	public UserResponseDto deleteUserByUsername(@PathVariable String username, @RequestBody Credentials credentials) {
+		return userService.deleteUserByUsername(username, credentials);
 	}
 
 	@GetMapping("/@{username}/feed")

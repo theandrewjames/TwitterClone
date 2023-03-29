@@ -41,8 +41,8 @@ public class TweetController {
 	}
 
 	@GetMapping("/{id}/context")
-	public TweetResponseDto getAllTweetsById(@PathVariable Long id) {
-		return null;
+	public TweetResponseDto getTweetContextById(@PathVariable Long id) {
+		return tweetService.getTweetContextById(id);
 	}
 
 	@PostMapping("/{id}/repost")

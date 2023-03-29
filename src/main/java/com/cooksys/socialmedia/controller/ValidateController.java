@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.socialmedia.dto.CredentialsDto;
 import com.cooksys.socialmedia.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,10 @@ public class ValidateController {
 //	}
 
 	@GetMapping("/username/exists/@{username}")
-	public CredentialsDto validateUserByUsername(@PathVariable String username) {
-
-		return null;
+	public boolean validateUserByUsername(@PathVariable String username) {
+		return validateService.validateUserByUsername(username);
 	}
+
 	@GetMapping("/username/available/@{username}")
 	public boolean validateUsernameAvailable(@PathVariable String username) {
 		return validateService.validateUsernameAvailable(username);
