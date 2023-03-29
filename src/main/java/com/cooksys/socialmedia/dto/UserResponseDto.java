@@ -8,7 +8,7 @@ import com.cooksys.socialmedia.entity.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+@AllArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
