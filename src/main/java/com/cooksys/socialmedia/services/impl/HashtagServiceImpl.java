@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.socialmedia.dto.HashtagDto;
-import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.mapper.HashtagMapper;
 import com.cooksys.socialmedia.repositories.HashtagRepository;
 import com.cooksys.socialmedia.services.HashtagService;
@@ -19,15 +18,9 @@ public class HashtagServiceImpl implements HashtagService {
 	private final HashtagMapper hashtagMapper;
 
 	@Override
-	public List<TweetResponseDto> getTweetsByHashtagLabel(String label) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<HashtagDto> getAllTags() {
-		// TODO Auto-generated method stub
-		return null;
+		return hashtagMapper.entitiesToDtos(hashtagRepository.findAll());
+		
 	}
 
 }
