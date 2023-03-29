@@ -34,7 +34,12 @@ public class TweetController {
 	public TweetResponseDto getTweetById(@PathVariable Long id) {
 		return tweetService.getTweetById(id);
 	}
-	
+
+	@GetMapping("/{id}/reposts")
+	public List<TweetResponseDto> getRepostsById(@PathVariable Long id) {
+		return tweetService.getRepostsById(id);
+	}
+
 	@DeleteMapping("/{id}")
 	public TweetResponseDto deleteTweetById(@PathVariable Long id, @RequestBody Credentials credentials) {
 		return tweetService.deleteTweetById(id, credentials);
