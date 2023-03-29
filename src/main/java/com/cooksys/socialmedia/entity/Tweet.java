@@ -69,4 +69,6 @@ public class Tweet {
 			inverseJoinColumns=@JoinColumn(name="hashtag_id")
 			)
     private List<Hashtag> hashtags = new ArrayList<>();
+	
+
 }
