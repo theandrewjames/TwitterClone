@@ -2,6 +2,7 @@ package com.cooksys.socialmedia.services;
 
 import java.util.List;
 
+import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
 
@@ -13,5 +14,8 @@ public interface TweetService  {
 	TweetResponseDto deleteTweetById(Long id, Credentials credentials);
 
 	TweetResponseDto getTweetContextById(Long id);
-
+  
+	TweetResponseDto createTweet(TweetRequestDto tweetRequestDto);
+	
+	List<TweetResponseDto> getRepostsById(Long id);
 }
