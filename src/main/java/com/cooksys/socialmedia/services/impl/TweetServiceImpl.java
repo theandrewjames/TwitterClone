@@ -3,20 +3,12 @@ package com.cooksys.socialmedia.services.impl;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import java.util.*;
-
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-
+import com.cooksys.socialmedia.dto.CredentialsDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
@@ -38,17 +30,13 @@ import com.cooksys.socialmedia.services.TweetService;
 @RequiredArgsConstructor
 public class TweetServiceImpl implements TweetService {
 
-	private final UserServiceImpl userServiceImpl;
-	private final HashtagServiceImpl hashtagServiceImpl;
-
 	private final TweetRepository tweetRepository;
 	private final UserRepository userRepository;
 	private final HashtagRepository hashtagRepository;
 
 	private final TweetMapper tweetMapper;
 	private final CredentialsMapper credentialsMapper;
-	private final UserMapper userMapper;
-	private final HashtagMapper hashtagMapper;
+
 
 	@Override
 	public List<TweetResponseDto> getAllTweets() {
@@ -100,7 +88,7 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
-		User validatedUser = validateTweetRequest(tweetRequestDto);
+		User validatedUser = validateCredentials(tweetRequestDto.getCredentials());
 
 		// Tweet
 		Tweet tweetToBeSaved = tweetMapper.dtoToEntity(tweetRequestDto);
@@ -118,6 +106,36 @@ public class TweetServiceImpl implements TweetService {
 
 		return tweetMapper.entityToDto(savedTweet);
 	}
+	
+	
+	@Override
+	public TweetResponseDto likeTweet(Long id, CredentialsDto credentialsDto) {
+		User user = validateCredentials(credentialsDto);
+		Optional<Tweet> tweetToBeLikedOptional = tweetRepository.findAllByIdAndDeletedFalse(id);
+		
+		if (!tweetToBeLikedOptional.isPresent()) {
+			throw new NotFoundException("Tweet with id: " + id + " not found!" );
+		}
+		
+		Tweet tweetToBeLiked = tweetToBeLikedOptional.get();
+		User savedUser = userRepository.saveAndFlush(user);	
+		
+		
+		List<User> likedByUsersList = tweetToBeLiked.getLikedByUsers();
+		List<Tweet> likedTweetsList = savedUser.getLikedTweets();
+					
+		
+		likedTweetsList.add(tweetToBeLiked);
+		likedByUsersList.add(savedUser);
+		
+		
+		tweetToBeLiked.setLikedByUsers(likedByUsersList);
+		Tweet savedTweet = tweetRepository.saveAndFlush(tweetToBeLiked);	
+		
+		return tweetMapper.entityToDto(savedTweet);		
+	}
+
+	
 
 	private List<User> extractUserMentions(String content) {
 		List<User> userMentions = new ArrayList<>();
@@ -169,13 +187,14 @@ public class TweetServiceImpl implements TweetService {
 		return hashtags;
 	}
 
-	private User validateTweetRequest(TweetRequestDto tweetRequestDto) {
-		Credentials requestCredentials = credentialsMapper.dtoToEntity(tweetRequestDto.getCredentials());
+	
+	private User validateCredentials(CredentialsDto credentialsDto) {
+		Credentials requestCredentials = credentialsMapper.dtoToEntity(credentialsDto);
 
 		Optional<User> userFromDB = userRepository.findByCredentials(requestCredentials);
 
 		if (!userFromDB.isPresent()) {
-			throw new NotAuthorizedException("User not authorized to create tweet!");
+			throw new NotAuthorizedException("User not authorized!");
 		}
 
 		return userFromDB.get();
@@ -195,5 +214,9 @@ public class TweetServiceImpl implements TweetService {
 		return tweetMapper.entitiesToDtos(foundTweets);
 
 	}
+
+
+
+
 
 }

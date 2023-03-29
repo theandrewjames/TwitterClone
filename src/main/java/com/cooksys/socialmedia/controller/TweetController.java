@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.socialmedia.dto.CredentialsDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
@@ -49,6 +50,12 @@ public class TweetController {
 	@PostMapping
 	public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto ) {
 		return tweetService.createTweet(tweetRequestDto);
+	}
+	
+	
+	@PostMapping("/{id}/like")
+	public TweetResponseDto likeTweet(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
+		return tweetService.likeTweet(id, credentialsDto);
 	}
 
 	@GetMapping("/{id}/context")
