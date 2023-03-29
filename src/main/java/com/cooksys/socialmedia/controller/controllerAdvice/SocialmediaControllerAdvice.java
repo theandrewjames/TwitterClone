@@ -15,21 +15,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice(basePackages = {"com.cooksys.socialmedia.controller"})
 @ResponseBody
 public class SocialmediaControllerAdvice {
+	
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
-    public ErrorDto handleBadRequestException(HttpRequest request, BadRequestException badRequestException) {
+    public ErrorDto handleBadRequestException(BadRequestException badRequestException) {
         return new ErrorDto(badRequestException.getMessage());
     }
     
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public ErrorDto handleNotFoundException(HttpRequest request, NotFoundException notFoundException) {
+    public ErrorDto handleNotFoundException(NotFoundException notFoundException) {
         return new ErrorDto(notFoundException.getMessage());
     }
     
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(NotAuthorizedException.class)
-    public ErrorDto handleNotAuthorizedException(HttpRequest request, NotAuthorizedException notAuthorizedException) {
+    public ErrorDto handleNotAuthorizedException( NotAuthorizedException notAuthorizedException) {
         return new ErrorDto(notAuthorizedException.getMessage());
     }
 }

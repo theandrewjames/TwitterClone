@@ -13,6 +13,8 @@ import com.cooksys.socialmedia.entity.Tweet;
 public interface TweetMapper {
 
 	TweetResponseDto entityToDto(Tweet tweet);
+	
+	Tweet responseDtoToEntity(TweetResponseDto tweetResponseDto);
 
 	Tweet dtoToEntity(TweetRequestDto tweetRequestDto);
 
