@@ -30,7 +30,7 @@ public class UserController {
 	}
 	@GetMapping("/@{username}")
 	public UserResponseDto getUserByUsername(@PathVariable String username) {
-		return null;
+		return userService.getUserByUsername(username);
 	}
 
 	@PatchMapping("/@{username}")
