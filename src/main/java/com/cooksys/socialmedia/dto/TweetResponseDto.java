@@ -18,7 +18,7 @@ public class TweetResponseDto {
 	
 	private Long id;
 	
-	private UserResponseDto user;
+	private UserResponseDto author;
 	
 	private Timestamp posted;
 	
@@ -26,7 +26,7 @@ public class TweetResponseDto {
 	
 	private TweetResponseDto inReplyTo;
 	
-	private Tweet TweetResponseDto;
+	private TweetResponseDto repostOf;
 	
 
 }

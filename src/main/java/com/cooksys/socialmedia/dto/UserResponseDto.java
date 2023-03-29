@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class UserResponseDto {
 
-	private Credentials credentials;
+	//private Credentials credentials;
 
 	private String username;
 
