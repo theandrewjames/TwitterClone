@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
 import com.cooksys.socialmedia.services.TweetService;
@@ -39,11 +40,18 @@ public class TweetController {
 	public TweetResponseDto deleteTweetById(@PathVariable Long id, @RequestBody Credentials credentials) {
 		return tweetService.deleteTweetById(id, credentials);
 	}
+	
+	@PostMapping
+	public TweetResponseDto createTweet(@RequestBody TweetRequestDto tweetRequestDto ) {
+		return tweetService.createTweet(tweetRequestDto);
+	}
 
 	@GetMapping("/{id}/context")
 	public TweetResponseDto getAllTweetsById(@PathVariable Long id) {
 		return null;
 	}
+	
+	
 
 	@PostMapping("/{id}/repost")
 	public TweetResponseDto createRepostById(@PathVariable Long id) {
