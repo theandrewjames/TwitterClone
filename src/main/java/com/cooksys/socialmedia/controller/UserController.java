@@ -1,8 +1,8 @@
 
 package com.cooksys.socialmedia.controller;
 
-import com.cooksys.socialmedia.exceptions.NotFoundException;
-import com.cooksys.socialmedia.services.UserService;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
+import com.cooksys.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,8 +32,8 @@ public class UserController {
 	}
 
 	@PatchMapping("/@{username}")
-	public UserResponseDto updateUserByUsername(@PathVariable String username) {
-		return null;
+	public UserResponseDto updateUsername(@PathVariable String username) {
+		return userService.updateUsername(username);
 	}
 
 	@DeleteMapping("/@{username}")
