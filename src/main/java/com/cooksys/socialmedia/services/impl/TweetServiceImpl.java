@@ -99,6 +99,9 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
+	public TweetResponseDto getTweetContextById(Long id) {
+		getTweetById(id);
+		return null;
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
 		User validatedUser = validateTweetRequest(tweetRequestDto);
 
