@@ -50,6 +50,10 @@ public class TweetController {
 		return null;
 	}
 
+	@GetMapping("/{id}/reposts")
+	public List<TweetResponseDto> getRepostsById(@PathVariable Long id) {
+		return tweetService.getRepostsById(id);
+	}
 	@GetMapping("/{id}/tags")
 	public TweetResponseDto getTagsById(@PathVariable Long id) {
 		return null;
