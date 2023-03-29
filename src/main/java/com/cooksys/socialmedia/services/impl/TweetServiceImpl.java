@@ -3,21 +3,22 @@ package com.cooksys.socialmedia.services.impl;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import java.util.*;
+
+
 import org.springframework.stereotype.Service;
 
-import com.cooksys.socialmedia.dto.CredentialsDto;
-import com.cooksys.socialmedia.dto.HashtagDto;
+
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
-import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
 import com.cooksys.socialmedia.entity.Hashtag;
 import com.cooksys.socialmedia.entity.Tweet;
@@ -178,6 +179,20 @@ public class TweetServiceImpl implements TweetService {
 		}
 
 		return userFromDB.get();
+	}
+
+
+	public List<TweetResponseDto> getRepostsById(Long id) {
+		List<Tweet> foundTweets = new ArrayList<>();
+		for(Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
+			if(tweet.getRepostOf() != null && tweet.getRepostOf().getId() == id) {
+				foundTweets.add(tweet);
+			}
+		}
+		if(foundTweets.isEmpty()) {
+			throw new NotFoundException("No reposts found for tweet with id #" + id);
+		}
+		return tweetMapper.entitiesToDtos(foundTweets);
 
 	}
 

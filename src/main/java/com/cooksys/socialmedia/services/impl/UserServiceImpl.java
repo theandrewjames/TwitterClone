@@ -15,30 +15,39 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    @Override
-    public List<UserResponseDto> getAllUsers() {
-        List<User> usersFound = new ArrayList<>();
-        for(User user : userRepository.findAll()) {
-            if(user.isDeleted() == false) {
-                usersFound.add(user);
-            }
-        }
-        return userMapper.entitiesToDtos(usersFound);
-    }
+	private final UserRepository userRepository;
+	private final UserMapper userMapper;
 
-    @Override
-    public UserResponseDto getUserByUsername(String username) {
-        User foundUser = null;
-        for(User user :  userRepository.findAll()) {
-            if(user.getCredentials().getUsername().equals(username)) {
-                foundUser = user;
-            }
-        }
-        if(foundUser == null || foundUser.isDeleted()) {
-            throw new NotFoundException("User not found");
-        }
-        return userMapper.entityToDto(foundUser);
-    }
+	@Override
+	public List<UserResponseDto> getAllUsers() {
+		List<User> usersFound = new ArrayList<>();
+		for (User user : userRepository.findAll()) {
+			if (user.isDeleted() == false) {
+				usersFound.add(user);
+			}
+		}
+		return userMapper.entitiesToDtos(usersFound);
+	}
+
+	@Override
+	public UserResponseDto getUserByUsername(String username) {
+		User foundUser = null;
+		for (User user : userRepository.findAll()) {
+			if (user.getCredentials().getUsername().equals(username)) {
+				foundUser = user;
+			}
+		}
+		if (foundUser == null || foundUser.isDeleted()) {
+			throw new NotFoundException("User not found");
+		}
+		return userMapper.entityToDto(foundUser);
+	}
+
+	@Override
+	public UserResponseDto updateUsername(String username) {
+		if (username.equals(null)) {
+			throw new NotFoundException("User not found to update");
+		}
+		return userMapper.entityToDto(username);
+	}
 }
