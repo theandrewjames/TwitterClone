@@ -8,4 +8,6 @@ public interface UserService {
 	List<UserResponseDto> getAllUsers();
 
 	UserResponseDto getUserByUsername(String username);
+
+	UserResponseDto updateUsername(String username);
 }

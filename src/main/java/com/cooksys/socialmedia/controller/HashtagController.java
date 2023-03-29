@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/tags")
 public class HashtagController {
-	private HashtagService hashtagService;
+	private final HashtagService hashtagService;
 
 	@GetMapping
 	public List<HashtagDto> getAllTags() {
