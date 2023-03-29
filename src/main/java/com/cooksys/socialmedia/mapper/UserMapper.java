@@ -20,4 +20,6 @@ public interface UserMapper {
 
 	List<UserResponseDto> entitiesToDtos(List<User> users);
 
+	UserResponseDto entityToDto(String username);
+
 }

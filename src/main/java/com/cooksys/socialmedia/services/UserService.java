@@ -1,12 +1,13 @@
 package com.cooksys.socialmedia.services;
 
-import com.cooksys.socialmedia.dto.UserResponseDto;
-
-import java.util.ArrayList;
 import java.util.List;
+
+import com.cooksys.socialmedia.dto.UserResponseDto;
 
 public interface UserService {
 	List<UserResponseDto> getAllUsers();
 
 	UserResponseDto getUserByUsername(String username);
+
+	UserResponseDto updateUsername(String username);
 }
