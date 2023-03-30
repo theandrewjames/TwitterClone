@@ -11,15 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
-import com.cooksys.socialmedia.dto.CredentialsDto;
-import com.cooksys.socialmedia.dto.ProfileDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
-import com.cooksys.socialmedia.entity.Profile;
 import com.cooksys.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;

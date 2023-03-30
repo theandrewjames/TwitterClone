@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.socialmedia.dto.ContextDto;
 import com.cooksys.socialmedia.dto.CredentialsDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
+import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
 import com.cooksys.socialmedia.services.TweetService;
 
@@ -66,7 +69,7 @@ public class TweetController {
 	}
 
 	@GetMapping("/{id}/context")
-	public TweetResponseDto getTweetContextById(@PathVariable Long id) {
+	public List<TweetResponseDto> getTweetContextById(@PathVariable Long id) {
 		return tweetService.getTweetContextById(id);
 	}
 	
