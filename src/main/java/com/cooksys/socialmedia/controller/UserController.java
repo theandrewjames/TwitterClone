@@ -46,8 +46,8 @@ public class UserController {
 	}
 
 	@PatchMapping("/@{username}")
-	public UserResponseDto updateUsername(@PathVariable String username) {
-		return userService.updateUsername(username);
+	public UserResponseDto updateUsername(@PathVariable String username, @RequestBody Credentials credentials) {
+		return userService.updateUsername(username, credentials);
 	}
 
 	@DeleteMapping("/@{username}")
@@ -69,9 +69,15 @@ public class UserController {
 	public List<UserResponseDto> getAllFollowing(@PathVariable String username) {
 		return userService.getAllFollowing(username);
 	}
+	
+	@GetMapping("/@{username}/tweets")
+	public List<UserResponseDto> getAllTweetsByUsername(@PathVariable String username) {
+		return null;
+		//userService.getAllTweetsByUsername(username);
+	}
 
 	@GetMapping("/@{username}/feed")
-	public TweetResponseDto getAllTweetsByUsername(@PathVariable String username) {
+	public TweetResponseDto getFeedByUsername(@PathVariable String username) {
 		return null;
 	}
 

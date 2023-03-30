@@ -63,11 +63,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseDto updateUsername(String username) {
-		if (username.equals(null)) {
+	public UserResponseDto updateUsername(String username, Credentials credentials) {
+		User foundUser = null;
+		for (User user : userRepository.findAll()) {
+			if (user.getCredentials().getUsername().equals(username)) {
+				foundUser = user;
+			}
+		}
+		if (foundUser == null || foundUser.isDeleted()) {
 			throw new NotFoundException("User not found to update");
 		}
-		return userMapper.entityToDto(username);
+		foundUser.setCredentials(credentials);
+		return userMapper.entityToDto(foundUser);
 	}
 
 	@Override
@@ -269,4 +276,18 @@ public class UserServiceImpl implements UserService {
 			throw new NotFoundException("Username not found!");
 		}	
 	}
+
+//	@Override
+//	public List<UserResponseDto> getAllTweetsByUsername(String username) {
+//		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
+//		
+//		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
+//			User userInDB = userInDBOptional.get();
+//			//List<User> tweetsByUser = userRepository.findByTweetsByUserAndDeletedFalse(userInDB);
+//			return userMapper.entitiesToDtos(tweetsByUser);
+//		}
+//		else {
+//			throw new NotFoundException("Username not found");
+//		}
+//	}
 }

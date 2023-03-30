@@ -12,7 +12,7 @@ public interface UserService {
 
 	UserResponseDto getUserByUsername(String username);
 
-	UserResponseDto updateUsername(String username);
+	UserResponseDto updateUsername(String username, Credentials credentials);
 
 	UserResponseDto deleteUserByUsername(String username, Credentials credentials);
 
@@ -27,4 +27,6 @@ public interface UserService {
 	List<UserResponseDto> getAllFollowers(String username);
 
 	List<UserResponseDto> getAllFollowing(String username);
+
+	//List<UserResponseDto> getAllTweetsByUsername(String username);
 }
