@@ -11,15 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
-import com.cooksys.socialmedia.dto.CredentialsDto;
-import com.cooksys.socialmedia.dto.ProfileDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
-import com.cooksys.socialmedia.entity.Profile;
 import com.cooksys.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,12 +30,12 @@ public class UserController {
 	public List<UserResponseDto> getAllUsers() {
 		return userService.getAllUsers();
 	}
-	
+
 	@GetMapping("/@{username}")
 	public UserResponseDto getUserByUsername(@PathVariable String username) {
 		return userService.getUserByUsername(username);
 	}
-	
+
 	@PostMapping
 	public UserResponseDto createUser(@RequestBody UserRequestDto userRequestDto) {
 		return userService.createUser(userRequestDto);
@@ -54,37 +50,39 @@ public class UserController {
 	public UserResponseDto deleteUserByUsername(@PathVariable String username, @RequestBody Credentials credentials) {
 		return userService.deleteUserByUsername(username, credentials);
 	}
-	
+
 	@GetMapping("/@{username}/mentions")
 	public List<TweetResponseDto> getAllTweetsByMentions(@PathVariable String username) {
 		return userService.getAllTweetsByMentions(username);
 	}
-	
+
 	@GetMapping("/@{username}/followers")
 	public List<UserResponseDto> getAllFollowers(@PathVariable String username) {
 		return userService.getAllFollowers(username);
 	}
-	
+
 	@GetMapping("/@{username}/following")
 	public List<UserResponseDto> getAllFollowing(@PathVariable String username) {
 		return userService.getAllFollowing(username);
 	}
-	
+
 	@GetMapping("/@{username}/tweets")
 	public List<UserResponseDto> getAllTweetsByUsername(@PathVariable String username) {
 		return null;
-		//userService.getAllTweetsByUsername(username);
+		// userService.getAllTweetsByUsername(username);
 	}
 
 	@GetMapping("/@{username}/feed")
 	public TweetResponseDto getFeedByUsername(@PathVariable String username) {
 		return null;
+
 	}
 
 	@PostMapping("/@{username}/follow")
 	public void followUserByUsername(@PathVariable String username, @RequestBody Credentials credentials) {
 		userService.followUserByUsername(username, credentials);
 	}
+
 	@PostMapping("/@{username}/unfollow")
 	public void unfollowUserByUsername(@PathVariable String username, @RequestBody Credentials credentials) {
 		userService.unfollowUserByUsername(username, credentials);
