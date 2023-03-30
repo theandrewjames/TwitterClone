@@ -1,7 +1,9 @@
 package com.cooksys.socialmedia.services.impl;
 
+import com.cooksys.socialmedia.controller.TweetController;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.exceptions.BadRequestException;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
@@ -157,6 +159,40 @@ public class TweetServiceImpl implements TweetService {
 		}
 		return userMapper.entitiesToDtos(verifiedUsers);
 	}
+
+
+	@Override
+	public TweetResponseDto createReplyById(Long id, TweetRequestDto tweetRequestDto) {
+		User matchedUser = validateCredentials(tweetRequestDto.getCredentials());
+		Tweet tweetToReplyTo = null;
+		for(Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
+			if(tweet.getId() == id) {
+				tweetToReplyTo = tweet;
+			}
+		}
+		if(tweetRequestDto.getContent() == null) {
+			throw new BadRequestException("Content needed for replies");
+		}
+		if(tweetToReplyTo == null) {
+			throw new NotFoundException("no tweet found with this id");
+		}
+		// Tweet
+		Tweet tweetToBeSaved = tweetMapper.dtoToEntity(tweetRequestDto);
+		// Extract hashtags and mentions
+		List<Hashtag> tweetHashtags = extractHashtags(tweetToBeSaved.getContent());
+		List<User> userMentions = extractUserMentions(tweetToBeSaved.getContent());
+
+		tweetToBeSaved.setDeleted(false);
+		tweetToBeSaved.setAuthor(matchedUser);
+		tweetToBeSaved.setInReplyTo(tweetToReplyTo);
+		tweetToBeSaved.setMentionedUsers(userMentions);
+		tweetToBeSaved.setHashtags(tweetHashtags);
+
+		Tweet savedTweet = tweetRepository.save(tweetToBeSaved);
+		return tweetMapper.entityToDto(savedTweet);
+	}
+
+
 
 	private List<User> extractUserMentions(String content) {
 		List<User> userMentions = new ArrayList<>();

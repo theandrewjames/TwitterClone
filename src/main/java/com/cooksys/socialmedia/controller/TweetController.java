@@ -2,6 +2,10 @@
 package com.cooksys.socialmedia.controller;
 
 import java.util.List;
+import java.util.Map;
+
+import com.cooksys.socialmedia.dto.UserResponseDto;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,6 +88,12 @@ public class TweetController {
 	@GetMapping("/{id}/likes")
 	public TweetResponseDto getLikesById(@PathVariable Long id) {
 		return null;
+	}
+
+
+	@PostMapping("/{id}/reply")
+	public TweetResponseDto createReplyById(@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto){
+		return tweetService.createReplyById(id, tweetRequestDto);
 	}
 
 }
