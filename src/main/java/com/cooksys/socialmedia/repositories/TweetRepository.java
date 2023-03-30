@@ -2,6 +2,7 @@ package com.cooksys.socialmedia.repositories;
 
 import com.cooksys.socialmedia.entity.Credentials;
 import com.cooksys.socialmedia.entity.Tweet;
+import com.cooksys.socialmedia.entity.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,4 +19,7 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 	
 	Optional<Tweet> findByIdAndDeletedFalse(Long id);
 	
+	List<Tweet> findByMentionedUsersContaining(User user);
+	
+
 }

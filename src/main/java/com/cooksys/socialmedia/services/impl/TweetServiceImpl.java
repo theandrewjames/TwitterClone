@@ -97,6 +97,10 @@ public class TweetServiceImpl implements TweetService {
 	
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
 		User validatedUser = validateCredentials(tweetRequestDto.getCredentials());
+		
+		if (tweetRequestDto.getContent() == null || tweetRequestDto.getContent().isBlank()) {
+			throw new BadRequestException("Tweet must have some content!");
+		}
 
 		// Tweet
 		Tweet tweetToBeSaved = tweetMapper.dtoToEntity(tweetRequestDto);
