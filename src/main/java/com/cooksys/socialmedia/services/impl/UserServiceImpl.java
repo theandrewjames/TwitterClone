@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.cooksys.socialmedia.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
-import com.cooksys.socialmedia.dto.CredentialsDto;
-import com.cooksys.socialmedia.dto.ProfileDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.cooksys.socialmedia.dto.ContextDto;
 import com.cooksys.socialmedia.dto.CredentialsDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
@@ -39,7 +40,6 @@ public class TweetServiceImpl implements TweetService {
 	private final TweetMapper tweetMapper;
 	private final CredentialsMapper credentialsMapper;
 	private final UserMapper userMapper;
-
 
 	@Override
 	public List<TweetResponseDto> getAllTweets() {
@@ -89,12 +89,6 @@ public class TweetServiceImpl implements TweetService {
 		}
 	}
 
-	@Override
-	public TweetResponseDto getTweetContextById(Long id) {
-		getTweetById(id);
-		return null;
-	}
-	
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
 		User validatedUser = validateCredentials(tweetRequestDto.getCredentials());
 
@@ -114,60 +108,56 @@ public class TweetServiceImpl implements TweetService {
 
 		return tweetMapper.entityToDto(savedTweet);
 	}
-	
-	
+
 	@Override
 	public TweetResponseDto likeTweet(Long id, CredentialsDto credentialsDto) {
 		User user = validateCredentials(credentialsDto);
 		Optional<Tweet> tweetToBeLikedOptional = tweetRepository.findAllByIdAndDeletedFalse(id);
-		
+
 		if (!tweetToBeLikedOptional.isPresent()) {
-			throw new NotFoundException("Tweet with id: " + id + " not found!" );
+			throw new NotFoundException("Tweet with id: " + id + " not found!");
 		}
-		
+
 		Tweet tweetToBeLiked = tweetToBeLikedOptional.get();
-		User savedUser = userRepository.saveAndFlush(user);	
-		
-		
+		User savedUser = userRepository.saveAndFlush(user);
+
 		List<User> likedByUsersList = tweetToBeLiked.getLikedByUsers();
 		List<Tweet> likedTweetsList = savedUser.getLikedTweets();
-					
-		
+
 		likedTweetsList.add(tweetToBeLiked);
 		likedByUsersList.add(savedUser);
-		
-		
+
 		tweetToBeLiked.setLikedByUsers(likedByUsersList);
-		Tweet savedTweet = tweetRepository.saveAndFlush(tweetToBeLiked);	
-		
-		return tweetMapper.entityToDto(savedTweet);		
+		Tweet savedTweet = tweetRepository.saveAndFlush(tweetToBeLiked);
+
+		return tweetMapper.entityToDto(savedTweet);
 	}
 
 	@Override
 	public List<UserResponseDto> getUsersMentionedInTweet(Long id) {
 		Tweet matchedTweet = tweetRepository.getReferenceById(id);
-		if(matchedTweet.getDeleted() || matchedTweet == null || matchedTweet.getContent() == null) {
+		if (matchedTweet.getDeleted() || matchedTweet == null || matchedTweet.getContent() == null) {
 			throw new BadRequestException("Deleted tweet or has no content");
-		};
+		}
+		;
 
 		List<User> extractedUsers = extractUserMentions(matchedTweet.getContent());
 		List<User> verifiedUsers = new ArrayList<>();
-		for(User user : extractedUsers) {
-			if(userRepository.findAll().contains(user)) {
+		for (User user : extractedUsers) {
+			if (userRepository.findAll().contains(user)) {
 				verifiedUsers.add(user);
 			}
 		}
-		if(verifiedUsers.isEmpty()) {
+		if (verifiedUsers.isEmpty()) {
 			throw new NotFoundException("No valid mentions found");
 		}
 		return userMapper.entitiesToDtos(verifiedUsers);
 	}
 
-
 	private List<User> extractUserMentions(String content) {
 		List<User> userMentions = new ArrayList<>();
 		Map<String, User> dbUsernames = new HashMap<>();
-		
+
 		for (User user : userRepository.findAll()) {
 			dbUsernames.put(user.getCredentials().getUsername(), user);
 		}
@@ -181,29 +171,28 @@ public class TweetServiceImpl implements TweetService {
 				}
 			}
 		}
-		
+
 		return userMentions;
 	}
-	
 
 	private List<Hashtag> extractHashtags(String content) {
 		// Extract hashtags
 		List<Hashtag> hashtags = new ArrayList<>();
 		Map<String, Hashtag> dbHashtags = new HashMap<>();
-		
-		for (Hashtag hashtag: hashtagRepository.findAll()) {
+
+		for (Hashtag hashtag : hashtagRepository.findAll()) {
 			dbHashtags.put(hashtag.getLabel(), hashtag);
 		}
-		
+
 		String[] words = content.split("\\s+");
 		for (String word : words) {
 			if (word.startsWith("#")) {
-				//If hashtag already exists in db 
+				// If hashtag already exists in db
 				Hashtag dbHashtag = dbHashtags.get(word);
 				if (dbHashtag != null) {
 					hashtags.add(dbHashtag);
 				} else {
-				//Create new hashtag
+					// Create new hashtag
 					Hashtag newHashtag = new Hashtag();
 					newHashtag.setLabel(word);
 					Hashtag savedHashtag = hashtagRepository.saveAndFlush(newHashtag);
@@ -214,7 +203,6 @@ public class TweetServiceImpl implements TweetService {
 		return hashtags;
 	}
 
-	
 	private User validateCredentials(CredentialsDto credentialsDto) {
 		Credentials requestCredentials = credentialsMapper.dtoToEntity(credentialsDto);
 
@@ -227,23 +215,32 @@ public class TweetServiceImpl implements TweetService {
 		return userFromDB.get();
 	}
 
-
 	public List<TweetResponseDto> getRepostsById(Long id) {
 		List<Tweet> foundTweets = new ArrayList<>();
-		for(Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
-			if(tweet.getRepostOf() != null && tweet.getRepostOf().getId() == id) {
+		for (Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
+			if (tweet.getRepostOf() != null && tweet.getRepostOf().getId() == id) {
 				foundTweets.add(tweet);
 			}
 		}
-		if(foundTweets.isEmpty()) {
+		if (foundTweets.isEmpty()) {
 			throw new NotFoundException("No reposts found for tweet with id #" + id);
 		}
 		return tweetMapper.entitiesToDtos(foundTweets);
 
 	}
 
-
-
-
+	@Override
+	public List<TweetResponseDto> getTweetContextById(Long id) {
+		List<Tweet> foundTweets = new ArrayList<>();
+		for (Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
+			if (tweet.getContent() != null) {
+				foundTweets.add(tweet);
+			}
+		}
+		if (foundTweets.isEmpty()) {
+			throw new NotFoundException("No tweets found with this id");
+		}
+		return tweetMapper.entitiesToDtos(foundTweets);
+	}
 
 }
