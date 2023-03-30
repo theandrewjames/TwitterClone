@@ -7,10 +7,17 @@ import java.util.Optional;
 import com.cooksys.socialmedia.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
+import com.cooksys.socialmedia.dto.CredentialsDto;
+import com.cooksys.socialmedia.dto.ProfileDto;
+import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
+import com.cooksys.socialmedia.entity.Profile;
 import com.cooksys.socialmedia.entity.User;
+import com.cooksys.socialmedia.exceptions.BadRequestException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
+import com.cooksys.socialmedia.mapper.CredentialsMapper;
+import com.cooksys.socialmedia.mapper.ProfileMapper;
 import com.cooksys.socialmedia.mapper.UserMapper;
 import com.cooksys.socialmedia.repositories.UserRepository;
 import com.cooksys.socialmedia.services.UserService;
@@ -22,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
+
+	private final CredentialsMapper credentialsMapper;
+	private final ProfileMapper profileMapper;
 
 	@Override
 	public List<UserResponseDto> getAllUsers() {
@@ -75,7 +85,66 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void followUserByUsername(String username, Credentials credentials) {
+	public UserResponseDto createUser(UserRequestDto userRequestDto) {
+		Credentials credentials = credentialsMapper.dtoToEntity(userRequestDto.getCredentials());
+		Profile profile = profileMapper.dtoToEntity(userRequestDto.getProfile());
+
+		if (credentials == null) {
+			throw new BadRequestException("Credentials not provided!");
+		}
+		
+		if (credentials.getUsername() == null || credentials.getUsername().isBlank()) {
+			throw new BadRequestException("Username not provided!");
+		}
+		
+		if (credentials.getPassword() == null || credentials.getPassword().isBlank()) {
+			throw new BadRequestException("Paswword not provided!");
+		}
+		
+		if (profile == null) {
+			throw new BadRequestException("Profile not provided!");
+		}
+		
+		if (profile.getEmail() == null || profile.getEmail().isBlank()) {
+			throw new BadRequestException("Email not provided!");
+		}		
+		
+		Optional<User> userInDbOptional = userRepository.findByCredentials(credentials);
+		User user = new User();
+		
+		Optional<User> usernameInDBOptional = userRepository.findByCredentialsUsername(credentials.getUsername());
+
+		if (usernameInDBOptional.isPresent() && !usernameInDBOptional.get().isDeleted()) {
+			User usernameInDB = userInDbOptional.get();
+			Credentials credentialsInDB = usernameInDB.getCredentials();
+			if (credentialsInDB.getUsername().equals(credentials.getUsername())) {
+				throw new BadRequestException("Username is already taken!");
+			}
+			
+		}
+				
+		if (userInDbOptional.isPresent()) {
+			if (userInDbOptional.get().isDeleted()) {
+				// Reactivate user
+				user = userInDbOptional.get();
+				user.setDeleted(false);
+				user.setCredentials(credentials);
+				user.setProfile(profile);
+
+			} else {
+				throw new BadRequestException("User already exists!");
+			}
+		} else {
+			user.setDeleted(false);
+			user.setCredentials(credentials);
+			user.setProfile(profile);
+		}
+
+		User savedUser = userRepository.saveAndFlush(user);
+		return userMapper.entityToDto(savedUser);
+
+	}
+		public void followUserByUsername(String username, Credentials credentials) {
 		User userToFollow = null;
 		//Finds user with username argument and attachs value to userToFollow
 		for(User user : userRepository.findAll()) {
