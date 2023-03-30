@@ -3,6 +3,7 @@ package com.cooksys.socialmedia.controller;
 
 import java.util.List;
 
+import com.cooksys.socialmedia.dto.UserResponseDto;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,10 @@ public class TweetController {
 		return tweetService.getTweetById(id);
 	}
 
+	@GetMapping("/{id}/mentions")
+	public List<UserResponseDto> getUsersMentionedInTweet(@PathVariable Long id) {
+		return tweetService.getUsersMentionedInTweet(id);
+	}
 	@GetMapping("/{id}/reposts")
 	public List<TweetResponseDto> getRepostsById(@PathVariable Long id) {
 		return tweetService.getRepostsById(id);
