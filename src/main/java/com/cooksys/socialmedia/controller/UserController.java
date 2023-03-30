@@ -50,6 +50,21 @@ public class UserController {
 	public UserResponseDto deleteUserByUsername(@PathVariable String username, @RequestBody Credentials credentials) {
 		return userService.deleteUserByUsername(username, credentials);
 	}
+	
+	@GetMapping("/@{username}/mentions")
+	public List<TweetResponseDto> getAllTweetsByMentions(@PathVariable String username) {
+		return userService.getAllTweetsByMentions(username);
+	}
+	
+	@GetMapping("/@{username}/followers")
+	public List<UserResponseDto> getAllFollowers(@PathVariable String username) {
+		return userService.getAllFollowers(username);
+	}
+	
+	@GetMapping("/@{username}/following")
+	public List<UserResponseDto> getAllFollowing(@PathVariable String username) {
+		return userService.getAllFollowing(username);
+	}
 
 	@GetMapping("/@{username}/feed")
 	public TweetResponseDto getAllTweetsByUsername(@PathVariable String username) {
