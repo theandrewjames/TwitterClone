@@ -88,11 +88,32 @@ public class UserServiceImpl implements UserService {
 		Credentials credentials = credentialsMapper.dtoToEntity(userRequestDto.getCredentials());
 		Profile profile = profileMapper.dtoToEntity(userRequestDto.getProfile());
 
+		if (credentials == null) {
+			throw new BadRequestException("Credentials not provided!");
+		}
+		
+		if (credentials.getUsername() == null || credentials.getUsername().isBlank()) {
+			throw new BadRequestException("Username not provided!");
+		}
+		
+		if (credentials.getPassword() == null || credentials.getPassword().isBlank()) {
+			throw new BadRequestException("Paswword not provided!");
+		}
+		
+		if (profile == null) {
+			throw new BadRequestException("Profile not provided!");
+		}
+		
+		if (profile.getEmail() == null || profile.getEmail().isBlank()) {
+			throw new BadRequestException("Email not provided!");
+		}		
+		
 		Optional<User> userInDbOptional = userRepository.findByCredentials(credentials);
 		User user = new User();
 		
 		Optional<User> usernameInDBOptional = userRepository.findByCredentialsUsername(credentials.getUsername());
-		if (usernameInDBOptional.isPresent()) {
+
+		if (usernameInDBOptional.isPresent() && !usernameInDBOptional.get().isDeleted()) {
 			User usernameInDB = userInDbOptional.get();
 			Credentials credentialsInDB = usernameInDB.getCredentials();
 			if (credentialsInDB.getUsername().equals(credentials.getUsername())) {
@@ -106,11 +127,14 @@ public class UserServiceImpl implements UserService {
 				// Reactivate user
 				user = userInDbOptional.get();
 				user.setDeleted(false);
+				user.setCredentials(credentials);
+				user.setProfile(profile);
 
 			} else {
 				throw new BadRequestException("User already exists!");
 			}
 		} else {
+			user.setDeleted(false);
 			user.setCredentials(credentials);
 			user.setProfile(profile);
 		}
