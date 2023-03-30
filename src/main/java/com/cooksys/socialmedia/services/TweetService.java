@@ -5,6 +5,7 @@ import java.util.List;
 import com.cooksys.socialmedia.dto.CredentialsDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
+import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
 
 public interface TweetService  {
@@ -22,4 +23,5 @@ public interface TweetService  {
 
 	TweetResponseDto likeTweet(Long id, CredentialsDto credentialsDto);
 
+	List<UserResponseDto> getUsersMentionedInTweet(Long id);
 }

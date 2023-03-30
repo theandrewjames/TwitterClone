@@ -1,5 +1,7 @@
 package com.cooksys.socialmedia.services.impl;
 
+import com.cooksys.socialmedia.dto.UserResponseDto;
+import com.cooksys.socialmedia.exceptions.BadRequestException;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +38,7 @@ public class TweetServiceImpl implements TweetService {
 
 	private final TweetMapper tweetMapper;
 	private final CredentialsMapper credentialsMapper;
+	private final UserMapper userMapper;
 
 
 	@Override
@@ -140,7 +143,26 @@ public class TweetServiceImpl implements TweetService {
 		return tweetMapper.entityToDto(savedTweet);		
 	}
 
-	
+	@Override
+	public List<UserResponseDto> getUsersMentionedInTweet(Long id) {
+		Tweet matchedTweet = tweetRepository.getReferenceById(id);
+		if(matchedTweet.getDeleted() || matchedTweet == null || matchedTweet.getContent() == null) {
+			throw new BadRequestException("Deleted tweet or has no content");
+		};
+
+		List<User> extractedUsers = extractUserMentions(matchedTweet.getContent());
+		List<User> verifiedUsers = new ArrayList<>();
+		for(User user : extractedUsers) {
+			if(userRepository.findAll().contains(user)) {
+				verifiedUsers.add(user);
+			}
+		}
+		if(verifiedUsers.isEmpty()) {
+			throw new NotFoundException("No valid mentions found");
+		}
+		return userMapper.entitiesToDtos(verifiedUsers);
+	}
+
 
 	private List<User> extractUserMentions(String content) {
 		List<User> userMentions = new ArrayList<>();
