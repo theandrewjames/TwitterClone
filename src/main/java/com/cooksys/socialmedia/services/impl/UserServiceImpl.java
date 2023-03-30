@@ -7,18 +7,19 @@ import java.util.Optional;
 import com.cooksys.socialmedia.exceptions.BadRequestException;
 import org.springframework.stereotype.Service;
 
-import com.cooksys.socialmedia.dto.CredentialsDto;
-import com.cooksys.socialmedia.dto.ProfileDto;
+import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
 import com.cooksys.socialmedia.entity.Profile;
+import com.cooksys.socialmedia.entity.Tweet;
 import com.cooksys.socialmedia.entity.User;
-import com.cooksys.socialmedia.exceptions.BadRequestException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mapper.CredentialsMapper;
 import com.cooksys.socialmedia.mapper.ProfileMapper;
+import com.cooksys.socialmedia.mapper.TweetMapper;
 import com.cooksys.socialmedia.mapper.UserMapper;
+import com.cooksys.socialmedia.repositories.TweetRepository;
 import com.cooksys.socialmedia.repositories.UserRepository;
 import com.cooksys.socialmedia.services.UserService;
 
@@ -27,6 +28,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+	private final TweetRepository tweetRepository;
+	private final TweetMapper tweetMapper;
+	
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 
@@ -224,5 +228,45 @@ public class UserServiceImpl implements UserService {
 				userRepository.saveAndFlush(user);
 			}
 		}
+	}
+
+	@Override
+	public List<TweetResponseDto> getAllTweetsByMentions(String username) {
+		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
+		
+		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
+			User userInDB = userInDBOptional.get();	
+			List<Tweet> tweets = tweetRepository.findByMentionedUsersContaining(userInDB);
+			return tweetMapper.entitiesToDtos(tweets);
+		} else {
+			throw new NotFoundException("Username not found!");
+		}	
+		
+	}
+
+	@Override
+	public List<UserResponseDto> getAllFollowers(String username) {
+		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
+		
+		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
+			User userInDB = userInDBOptional.get();	
+			List<User> followers = userRepository.findByFollowersAndDeletedFalse(userInDB);
+			return userMapper.entitiesToDtos(followers);
+		} else {
+			throw new NotFoundException("Username not found!");
+		}	
+	}
+
+	@Override
+	public List<UserResponseDto> getAllFollowing(String username) {
+		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
+		
+		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
+			User userInDB = userInDBOptional.get();	
+			List<User> following = userRepository.findByFollowingAndDeletedFalse(userInDB);
+			return userMapper.entitiesToDtos(following);
+		} else {
+			throw new NotFoundException("Username not found!");
+		}	
 	}
 }
