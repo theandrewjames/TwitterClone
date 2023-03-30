@@ -17,15 +17,16 @@ import com.cooksys.socialmedia.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Component
+//@Component
 @RequiredArgsConstructor
-public class Seeder implements CommandLineRunner {
+public class Seeder{
+//implements CommandLineRunner {
 
 	private final HashtagRepository hashtagRepository;
 	private final TweetRepository tweetRepository;
 	private final UserRepository userRepository;
 
-	@Override
+	//@Override
 	public void run(String... args) throws Exception {
 
 		// --- User 1 ---
