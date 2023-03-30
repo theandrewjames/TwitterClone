@@ -17,7 +17,7 @@ import com.cooksys.socialmedia.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-//@Component
+@Component
 @RequiredArgsConstructor
 public class Seeder implements CommandLineRunner {
 
