@@ -71,8 +71,8 @@ public class UserController {
 	}
 
 	@GetMapping("/@{username}/feed")
-	public TweetResponseDto getAllTweetsByUsername(@PathVariable String username) {
-		return null;
+	public List<TweetResponseDto> getAllTweetsByUsername(@PathVariable String username) {
+		return userService.getAllTweetsByUsername(username);
 	}
 
 	@PostMapping("/@{username}/follow")
