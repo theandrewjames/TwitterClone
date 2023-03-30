@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cooksys.socialmedia.dto.CredentialsDto;
 import com.cooksys.socialmedia.dto.ProfileDto;
@@ -59,4 +60,8 @@ public class UserController {
 		return null;
 	}
 
+	@PostMapping("/@{username}/follow")
+	public void followUserByUsername(@PathVariable String username, @RequestBody Credentials credentials) {
+	userService.followUserByUsername(username, credentials);
+	}
 }
