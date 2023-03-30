@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
 	}
 		public void followUserByUsername(String username, Credentials credentials) {
 		User userToFollow = null;
-		//Finds user with username argument and attachs value to userToFollow
+		//Finds user with username argument and attaches value to userToFollow
 		for(User user : userRepository.findAll()) {
 			if(user.getCredentials().getUsername().equals(username)) {
 				userToFollow = user;
@@ -179,6 +179,47 @@ public class UserServiceImpl implements UserService {
 
 				//for user(that will follow userToFollow) gets following, adds, saves
 				following.add(userToFollow);
+				user.setFollowing(following);
+				userRepository.saveAndFlush(user);
+			}
+		}
+	}
+
+	@Override
+	public void unfollowUserByUsername(String username, Credentials credentials) {
+		User userToUnfollow = null;
+		//Finds user with username argument and attaches value to userToUnfollow
+		for(User user : userRepository.findAll()) {
+			if(user.getCredentials().getUsername().equals(username)) {
+				userToUnfollow = user;
+			}
+		}
+		if(userToUnfollow == null) {
+			throw new BadRequestException("No valid user with this username found");
+		}
+		for(User user : userRepository.findAll()) {
+			//If user found with credentials but user is deleted throw error
+			if(user.getCredentials().equals(credentials) && user.isDeleted()) {
+				throw new BadRequestException("Credentials don't match active user");
+			}
+			//If username user  is same as credentials user throw error
+			if(user.getCredentials().equals(credentials) && user.getCredentials().getUsername().equals(username)) {
+				throw new BadRequestException("User cannot unfollow itself");
+			}
+			//If user found and  is not deleted throw error
+			if(user.getCredentials().equals(credentials) && !user.isDeleted()) {
+				List<User> following = user.getFollowing();
+				if(!following.contains(userToUnfollow)) {
+					throw new BadRequestException("User doesn't follow this user");
+				}
+				//for userToUnfollow gets followers, removes follower, saves
+				List<User> followers = userToUnfollow.getFollowers();
+				followers.remove(user);
+				userToUnfollow.setFollowers(followers);
+				userRepository.saveAndFlush(userToUnfollow);
+
+				//for user(that will unfollow userToUnfollow) gets following, removes, saves
+				following.remove(userToUnfollow);
 				user.setFollowing(following);
 				userRepository.saveAndFlush(user);
 			}
