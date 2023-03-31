@@ -334,8 +334,22 @@ public class TweetServiceImpl implements TweetService {
 			
 			return tweetMapper.entitiesToDtos(tweet.getReplies());			
 			
->>>>>>> a0ea0ed7c4a582892d470629ee18d3341d2e6931
 		}
+	}
+
+	@Override
+	public TweetResponseDto createRepostById(Long id, CredentialsDto credentialsDto) {
+		User user = validateCredentials(credentialsDto);
+		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
+		
+		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
+			throw new NotFoundException("No tweet found to repot");
+		}
+		
+		Tweet tweetToRepost = tweetToFind.get();
+		User savedUser = userRepository.saveAndFlush(user);
+		
+		return tweetMapper.entityToDto(tweetToRepost);
 	}
 
 

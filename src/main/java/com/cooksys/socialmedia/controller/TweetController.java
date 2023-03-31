@@ -71,8 +71,8 @@ public class TweetController {
 	}
 	
 	@PostMapping("/{id}/repost")
-	public TweetResponseDto createRepostById(@PathVariable Long id) {
-		return null;
+	public TweetResponseDto createRepostById(@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
+		return tweetService.createRepostById(id, credentialsDto);
 	}
 
 	@GetMapping("/{id}/tags")
