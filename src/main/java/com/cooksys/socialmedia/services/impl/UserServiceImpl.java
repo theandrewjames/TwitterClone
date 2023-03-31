@@ -67,18 +67,21 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDto deleteUserByUsername(String username, Credentials credentials) {
 		User userToDelete = null;
-		if (username.equals(null)) {
-			throw new NotFoundException("No user found to delete");
-		}
+
 		for (User user : userRepository.findAll()) {
 			if (user.getCredentials().getUsername().equals(username)) {
 				userToDelete = user;
 			}
 		}
-		Credentials credentialsToBeDeleted = userToDelete.getCredentials();
-		if (credentials.equals(credentialsToBeDeleted)) {
-			userToDelete.setDeleted(true);
+		if (userToDelete!=null) {
+			Credentials credentialsToBeDeleted = userToDelete.getCredentials();
+			if (credentials.equals(credentialsToBeDeleted)) {
+				userToDelete.setDeleted(true);
+			}
+		} else {
+			throw new NotFoundException("No user found to delete");
 		}
+		
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
 	}
 
@@ -258,26 +261,25 @@ public class UserServiceImpl implements UserService {
 	public List<UserResponseDto> getAllFollowers(String username) {
 		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
 
-		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
-			User userInDB = userInDBOptional.get();
-			List<User> followers = userRepository.findByFollowersAndDeletedFalse(userInDB);
-			return userMapper.entitiesToDtos(followers);
-		} else {
+		if (!userInDBOptional.isPresent() || userInDBOptional.get().isDeleted()) {
 			throw new NotFoundException("Username not found!");
-		}
+		} else {
+			User userInDB = userInDBOptional.get();
+			return userMapper.entitiesToDtos(userInDB.getFollowers());
+		}	
+
 	}
 
 	@Override
 	public List<UserResponseDto> getAllFollowing(String username) {
 		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
 
-		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
-			User userInDB = userInDBOptional.get();
-			List<User> following = userRepository.findByFollowingAndDeletedFalse(userInDB);
-			return userMapper.entitiesToDtos(following);
-		} else {
+		if (!userInDBOptional.isPresent() || userInDBOptional.get().isDeleted()) {
 			throw new NotFoundException("Username not found!");
-		}
+		} else {		
+			User userInDB = userInDBOptional.get();
+			return userMapper.entitiesToDtos(userInDB.getFollowing());
+		} 
 	}
 
 
@@ -285,8 +287,8 @@ public class UserServiceImpl implements UserService {
 	public List<TweetResponseDto> getAllTweetsByUsername(String username) {
 		Optional<User> userToFind = userRepository.findByCredentialsUsername(username);
 
-		if ( userToFind.equals(null) || userToFind.get().isDeleted()) {
-		throw new NotFoundException("No user found with that username");
+		if ( !userToFind.isPresent() || userToFind.get().isDeleted()) {
+			throw new NotFoundException("No user found with that username");
 		}
 		else {
 			User user = userToFind.get();
