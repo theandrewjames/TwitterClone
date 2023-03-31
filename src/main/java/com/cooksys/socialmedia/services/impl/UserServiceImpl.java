@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto getUserByUsername(String username) {
 		Optional<User> userToFind = userRepository.findByCredentialsUsername(username);
 		
-		if (!userToFind.isPresent() ||userToFind.get().getCredentials().getUsername().equals(null) || userToFind.get().isDeleted()) {
+		if (!userToFind.isPresent() || userToFind.get().isDeleted()) {
 			throw new NotFoundException("No user found with that username!");
 		}
 		else {
@@ -144,6 +144,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void followUserByUsername(String username, Credentials credentials) {
+		
+		if (credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new NotAuthorizedException("Invalid credentials please try again!");
+		}
+		
+		
 		User userToFollow = null;
 		// Finds user with username argument and attaches value to userToFollow
 		for (User user : userRepository.findAll()) {
@@ -186,6 +192,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void unfollowUserByUsername(String username, Credentials credentials) {
+		
+		if (credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new NotAuthorizedException("Invalid credentials please try again!");
+		}
+		
+		
 		User userToUnfollow = null;
 		// Finds user with username argument and attaches value to userToUnfollow
 		for (User user : userRepository.findAll()) {
@@ -280,25 +292,42 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseDto updateUsername(String username, CredentialsDto credentialsDto, ProfileDto profileDto) {
+	public UserResponseDto updateUsername(String username, UserRequestDto userRequestDto) {
+		
+		Credentials credentials = credentialsMapper.dtoToEntity(userRequestDto.getCredentials());
+		Profile profile = profileMapper.dtoToEntity(userRequestDto.getProfile());
+
+		if (credentials == null || credentials.getUsername() == null || credentials.getUsername() == null) {
+			throw new NotAuthorizedException("Invalid credentials please try again!");
+		}
+		
+		if (profile == null) {
+			throw new NotAuthorizedException("Invalid profile!");
+		}
+		
 		Optional<User> userInDbOptional = userRepository.findByCredentialsUsername(username);
-		if (userInDbOptional.equals(null)) {
+		
+		
+		if (!userInDbOptional.isPresent()) {
 			throw new NotFoundException("Username not found");
 		}
 		else if (userInDbOptional.get().isDeleted()) {
 			throw new NotFoundException("User has been deleted");
 		}
-//		if (!userInDbOptional.get().getCredentials()) {
-//			throw new NotAuthorizedException("Wrong credentials please try again");
-//		}
-		credentialsDto.setUsername(credentialsDto.getUsername());
-		credentialsDto.setPassword(credentialsDto.getPassword());
+
+		if (!credentials.equals(userInDbOptional.get().getCredentials())) {
+			throw new NotAuthorizedException("Credentials don't match!");
+		}
+
 		
-		profileDto.setEmail(profileDto.getEmail());
-		profileDto.setFirstName(profileDto.getFirstName());
-		profileDto.setLastName(profileDto.getLastName());
-		profileDto.setPhone(profileDto.getPhone());
+		User userInDB = userInDbOptional.get();
 		
-		return userMapper.entityToDtos(username, credentialsDto, profileDto);
+		
+		if (profile.getEmail() != null) {
+			userInDB.setProfile(profile);	
+		}
+		User savedUser = userRepository.saveAndFlush(userInDB);
+		return userMapper.entityToDto(savedUser);
+
 	}
 }
