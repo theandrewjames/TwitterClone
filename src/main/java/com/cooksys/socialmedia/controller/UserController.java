@@ -75,8 +75,8 @@ public class UserController {
 	}
 
 	@GetMapping("/@{username}/feed")
-	public TweetResponseDto getFeedByUsername(@PathVariable String username) {
-		return null;
+	public List <TweetResponseDto> getFeedByUsername(@PathVariable String username) {
+		return userService.getFeedByUsername(username);
 
 	}
 
