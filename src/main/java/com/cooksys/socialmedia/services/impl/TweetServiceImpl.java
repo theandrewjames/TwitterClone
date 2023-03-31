@@ -1,25 +1,25 @@
 package com.cooksys.socialmedia.services.impl;
 
-import com.cooksys.socialmedia.controller.TweetController;
-import com.cooksys.socialmedia.dto.UserResponseDto;
-import com.cooksys.socialmedia.exceptions.BadRequestException;
-import com.fasterxml.jackson.databind.JsonNode;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.cooksys.socialmedia.dto.ContextDto;
 import com.cooksys.socialmedia.dto.CredentialsDto;
+import com.cooksys.socialmedia.dto.HashtagDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
+import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
 import com.cooksys.socialmedia.entity.Hashtag;
 import com.cooksys.socialmedia.entity.Tweet;
 import com.cooksys.socialmedia.entity.User;
+import com.cooksys.socialmedia.exceptions.BadRequestException;
 import com.cooksys.socialmedia.exceptions.NotAuthorizedException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mapper.CredentialsMapper;
@@ -30,6 +30,8 @@ import com.cooksys.socialmedia.repositories.HashtagRepository;
 import com.cooksys.socialmedia.repositories.TweetRepository;
 import com.cooksys.socialmedia.repositories.UserRepository;
 import com.cooksys.socialmedia.services.TweetService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +44,7 @@ public class TweetServiceImpl implements TweetService {
 	private final TweetMapper tweetMapper;
 	private final CredentialsMapper credentialsMapper;
 	private final UserMapper userMapper;
+	private final HashtagMapper hashtagMapper;
 
 	@Override
 	public List<TweetResponseDto> getAllTweets() {
@@ -270,17 +273,41 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public List<TweetResponseDto> getTweetContextById(Long id) {
-		List<Tweet> foundTweets = new ArrayList<>();
-		for (Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
-			if (tweet.getContent() != null) {
-				foundTweets.add(tweet);
-			}
+	public ContextDto getTweetContextById(Long id) {
+//		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
+//		if (tweetToFind.equals(null) || tweetToFind.get().getDeleted() == true) {
+//			throw new NotFoundException("No tweets found with this id");
+//		}
+//		else {
+//			Tweet tweet = tweetToFind.get();
+//			return tweetMapper.dtoToEntity(tweet.getInReplyTo().getPosted());
+//		}
+		return null;
+	}
+
+	@Override
+	public HashtagDto getTagsById(Long id) {
+		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
+		if (tweetToFind.equals(null) || tweetToFind.get().getDeleted() == true) {
+			throw new NotFoundException("No Tweets found with this id");
 		}
-		if (foundTweets.isEmpty()) {
+		else {
+			Tweet tweet = tweetToFind.get();
+			return hashtagMapper.entityToDto(null);
+		}
+	}
+
+	@Override
+	public TweetResponseDto getLikesById(Long id) {
+		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
+		if (tweetToFind.equals(null) || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
-		return tweetMapper.entitiesToDtos(foundTweets);
+		else {
+			Tweet tweet = tweetToFind.get();
+			return tweetMapper.entityToDto(tweet);
+		}
 	}
+
 
 }

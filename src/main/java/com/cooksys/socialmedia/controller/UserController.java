@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cooksys.socialmedia.dto.CredentialsDto;
+import com.cooksys.socialmedia.dto.ProfileDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
@@ -42,8 +44,8 @@ public class UserController {
 	}
 
 	@PatchMapping("/@{username}")
-	public UserResponseDto updateUsername(@PathVariable String username, @RequestBody Credentials credentials) {
-		return userService.updateUsername(username, credentials);
+	public UserResponseDto updateUsername(@PathVariable String username, @RequestBody CredentialsDto credentialsDto, ProfileDto profileDto) {
+		return userService.updateUsername(username, credentialsDto, profileDto);
 	}
 
 	@DeleteMapping("/@{username}")
@@ -67,9 +69,8 @@ public class UserController {
 	}
 
 	@GetMapping("/@{username}/tweets")
-	public List<UserResponseDto> getAllTweetsByUsername(@PathVariable String username) {
-		return null;
-		// userService.getAllTweetsByUsername(username);
+	public List<TweetResponseDto> getAllTweetsByUsername(@PathVariable String username) {
+		return userService.getAllTweetsByUsername(username);
 	}
 
 	@GetMapping("/@{username}/feed")
