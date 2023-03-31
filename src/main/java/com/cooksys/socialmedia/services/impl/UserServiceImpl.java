@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto getUserByUsername(String username) {
 		Optional<User> userToFind = userRepository.findByCredentialsUsername(username);
 		
-		if (userToFind.get().getCredentials().getUsername().equals(null) || userToFind.get().isDeleted()) {
+		if (!userToFind.isPresent() ||userToFind.get().getCredentials().getUsername().equals(null) || userToFind.get().isDeleted()) {
 			throw new NotFoundException("No user found with that username!");
 		}
 		else {
