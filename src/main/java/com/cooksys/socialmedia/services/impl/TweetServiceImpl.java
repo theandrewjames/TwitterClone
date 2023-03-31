@@ -343,13 +343,14 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
-			throw new NotFoundException("No tweet found to repot");
+			throw new NotFoundException("No tweet found to repost");
 		}
 		
-		Tweet tweetToRepost = tweetToFind.get();
-		User savedUser = userRepository.saveAndFlush(user);
-		
-		return tweetMapper.entityToDto(tweetToRepost);
+		Tweet tweetRepost = new Tweet();
+		tweetRepost.setAuthor(user);
+		tweetRepost.setRepostOf(tweetToFind.get());
+
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweetRepost));
 	}
 
 
