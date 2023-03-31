@@ -76,12 +76,12 @@ public class TweetController {
 	}
 
 	@GetMapping("/{id}/tags")
-	public HashtagDto getTagsById(@PathVariable Long id) {
+	public List<HashtagDto> getTagsById(@PathVariable Long id) {
 		return tweetService.getTagsById(id);
 	}
 
 	@GetMapping("/{id}/likes")
-	public TweetResponseDto getLikesById(@PathVariable Long id) {
+	public List<TweetResponseDto> getLikesById(@PathVariable Long id) {
 		return tweetService.getLikesById(id);
 	}
 

@@ -144,12 +144,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void followUserByUsername(String username, Credentials credentials) {
-		
+	
 		if (credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
 			throw new NotAuthorizedException("Invalid credentials please try again!");
 		}
 		
-		
+		if(credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new NotAuthorizedException("Missing login credentials");
+		}
+
 		User userToFollow = null;
 		// Finds user with username argument and attaches value to userToFollow
 		for (User user : userRepository.findAll()) {
