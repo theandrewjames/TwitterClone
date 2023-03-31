@@ -5,6 +5,8 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.cooksys.socialmedia.dto.CredentialsDto;
+import com.cooksys.socialmedia.dto.ProfileDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.User;
@@ -25,5 +27,7 @@ public interface UserMapper {
 	List<UserResponseDto> entitiesToDtos(List<User> users);
 
 	UserResponseDto entityToDto(String username);
+
+	UserResponseDto entityToDtos(String username, CredentialsDto credentialsDto, ProfileDto profileDto);
 
 }

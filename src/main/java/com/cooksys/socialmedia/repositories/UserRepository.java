@@ -21,7 +21,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findByFollowingAndDeletedFalse(User user);
 	
 	List<User> findByFollowersAndDeletedFalse(User user);
-
-	//List<User> findByTweetsByUserAndDeletedFalse(User user);
-
+	
 }

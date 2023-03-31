@@ -1,14 +1,13 @@
 package com.cooksys.socialmedia.repositories;
 
-import com.cooksys.socialmedia.entity.Credentials;
-import com.cooksys.socialmedia.entity.Tweet;
-import com.cooksys.socialmedia.entity.User;
-
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.cooksys.socialmedia.entity.Tweet;
+import com.cooksys.socialmedia.entity.User;
 
 @Repository
 public interface TweetRepository extends JpaRepository<Tweet, Long> {
@@ -21,5 +20,4 @@ public interface TweetRepository extends JpaRepository<Tweet, Long> {
 	
 	List<Tweet> findByMentionedUsersContaining(User user);
 	
-
 }

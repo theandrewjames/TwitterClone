@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.cooksys.socialmedia.dto.TweetResponseDto;
+import com.cooksys.socialmedia.entity.Hashtag;
 import com.cooksys.socialmedia.entity.Tweet;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mapper.TweetMapper;
@@ -46,5 +47,7 @@ public class HashtagServiceImpl implements HashtagService {
 		matchedTweets.sort(Comparator.comparing(Tweet::getPosted).reversed());
 		return tweetMapper.entitiesToDtos(matchedTweets);
 	}
+
+
 
 }

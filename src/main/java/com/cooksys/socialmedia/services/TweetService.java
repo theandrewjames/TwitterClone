@@ -2,17 +2,13 @@ package com.cooksys.socialmedia.services;
 
 import java.util.List;
 
-
 import com.cooksys.socialmedia.dto.ContextDto;
-
-import com.cooksys.socialmedia.controller.TweetController;
-
 import com.cooksys.socialmedia.dto.CredentialsDto;
+import com.cooksys.socialmedia.dto.HashtagDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public interface TweetService  {
 	TweetResponseDto getTweetById(Long id);
@@ -29,9 +25,12 @@ public interface TweetService  {
 
 	List<UserResponseDto> getUsersMentionedInTweet(Long id);
 
-
-	List<TweetResponseDto> getTweetContextById(Long id);
+	ContextDto getTweetContextById(Long id);
 
 	TweetResponseDto createReplyById(Long id, TweetRequestDto tweetRequestDto);
+
+	HashtagDto getTagsById(Long id);
+
+	TweetResponseDto getLikesById(Long id);
 
 }

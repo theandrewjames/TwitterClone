@@ -2,10 +2,6 @@
 package com.cooksys.socialmedia.controller;
 
 import java.util.List;
-import java.util.Map;
-
-import com.cooksys.socialmedia.dto.UserResponseDto;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.socialmedia.dto.ContextDto;
 import com.cooksys.socialmedia.dto.CredentialsDto;
+import com.cooksys.socialmedia.dto.HashtagDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
@@ -69,25 +66,23 @@ public class TweetController {
 	}
 
 	@GetMapping("/{id}/context")
-	public List<TweetResponseDto> getTweetContextById(@PathVariable Long id) {
+	public ContextDto getTweetContextById(@PathVariable Long id) {
 		return tweetService.getTweetContextById(id);
 	}
 	
-	
-
 	@PostMapping("/{id}/repost")
 	public TweetResponseDto createRepostById(@PathVariable Long id) {
 		return null;
 	}
 
 	@GetMapping("/{id}/tags")
-	public TweetResponseDto getTagsById(@PathVariable Long id) {
-		return null;
+	public HashtagDto getTagsById(@PathVariable Long id) {
+		return tweetService.getTagsById(id);
 	}
 
 	@GetMapping("/{id}/likes")
 	public TweetResponseDto getLikesById(@PathVariable Long id) {
-		return null;
+		return tweetService.getLikesById(id);
 	}
 
 
