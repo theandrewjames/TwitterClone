@@ -298,36 +298,18 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	
-	@Override
-	public List<UserResponseDto> getUsersMentionedInTweet(Long id) {
-		Tweet matchedTweet = tweetRepository.getReferenceById(id);
-		if (matchedTweet.getDeleted() || matchedTweet == null || matchedTweet.getContent() == null) {
-			throw new BadRequestException("Deleted tweet or has no content");
-		}
-		;
-
-		List<User> extractedUsers = extractUserMentions(matchedTweet.getContent());
-		List<User> verifiedUsers = new ArrayList<>();
-		for (User user : extractedUsers) {
-			if (userRepository.findAll().contains(user)) {
-				verifiedUsers.add(user);
-			}
-		}
-		if (verifiedUsers.isEmpty()) {
-			throw new NotFoundException("No valid mentions found");
-		}
-		return userMapper.entitiesToDtos(verifiedUsers);
-	}
 	
 	@Override
-	public List<TweetResponseDto> getLikesById(Long id) {
+	public List<UserResponseDto> getLikesById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 		if (tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
 		else {
 			Tweet tweet = tweetToFind.get();
-			return userMapper.entitiesToDtos(tweet.getLikedByUsers());
+			
+			return userMapper.entitiesToDtos(tweet.getLikedByUsers());			
+			
 		}
 	}
 

@@ -31,6 +31,6 @@ public interface TweetService  {
 
 	List<HashtagDto> getTagsById(Long id);
 
-	List<TweetResponseDto> getLikesById(Long id);
+	List<UserResponseDto> getLikesById(Long id);
 
 }
