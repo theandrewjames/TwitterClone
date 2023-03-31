@@ -286,26 +286,48 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public HashtagDto getTagsById(Long id) {
+	public List<HashtagDto> getTagsById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		if (tweetToFind.equals(null) || tweetToFind.get().getDeleted() == true) {
+		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No Tweets found with this id");
 		}
 		else {
 			Tweet tweet = tweetToFind.get();
-			return hashtagMapper.entityToDto(null);
+			return hashtagMapper.entitiesToDtos(tweet.getHashtags());
 		}
 	}
 
+	
 	@Override
-	public TweetResponseDto getLikesById(Long id) {
+	public List<UserResponseDto> getUsersMentionedInTweet(Long id) {
+		Tweet matchedTweet = tweetRepository.getReferenceById(id);
+		if (matchedTweet.getDeleted() || matchedTweet == null || matchedTweet.getContent() == null) {
+			throw new BadRequestException("Deleted tweet or has no content");
+		}
+		;
+
+		List<User> extractedUsers = extractUserMentions(matchedTweet.getContent());
+		List<User> verifiedUsers = new ArrayList<>();
+		for (User user : extractedUsers) {
+			if (userRepository.findAll().contains(user)) {
+				verifiedUsers.add(user);
+			}
+		}
+		if (verifiedUsers.isEmpty()) {
+			throw new NotFoundException("No valid mentions found");
+		}
+		return userMapper.entitiesToDtos(verifiedUsers);
+	}
+	
+	@Override
+	public List<TweetResponseDto> getLikesById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		if (tweetToFind.equals(null) || tweetToFind.get().getDeleted() == true) {
+		if (tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
 		else {
 			Tweet tweet = tweetToFind.get();
-			return tweetMapper.entityToDto(tweet);
+			return userMapper.entitiesToDtos(tweet.getLikedByUsers());
 		}
 	}
 
