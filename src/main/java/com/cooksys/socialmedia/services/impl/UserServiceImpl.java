@@ -1,6 +1,7 @@
 package com.cooksys.socialmedia.services.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto getUserByUsername(String username) {
 		Optional<User> userToFind = userRepository.findByCredentialsUsername(username);
 		
-		if (!userToFind.isPresent() ||userToFind.get().getCredentials().getUsername().equals(null) || userToFind.get().isDeleted()) {
+		if (!userToFind.isPresent() || userToFind.get().isDeleted()) {
 			throw new NotFoundException("No user found with that username!");
 		}
 		else {
@@ -67,18 +68,21 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDto deleteUserByUsername(String username, Credentials credentials) {
 		User userToDelete = null;
-		if (username.equals(null)) {
-			throw new NotFoundException("No user found to delete");
-		}
+
 		for (User user : userRepository.findAll()) {
 			if (user.getCredentials().getUsername().equals(username)) {
 				userToDelete = user;
 			}
 		}
-		Credentials credentialsToBeDeleted = userToDelete.getCredentials();
-		if (credentials.equals(credentialsToBeDeleted)) {
-			userToDelete.setDeleted(true);
+		if (userToDelete!=null) {
+			Credentials credentialsToBeDeleted = userToDelete.getCredentials();
+			if (credentials.equals(credentialsToBeDeleted)) {
+				userToDelete.setDeleted(true);
+			}
+		} else {
+			throw new NotFoundException("No user found to delete");
 		}
+		
 		return userMapper.entityToDto(userRepository.saveAndFlush(userToDelete));
 	}
 
@@ -144,9 +148,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void followUserByUsername(String username, Credentials credentials) {
+	
+		if (credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new NotAuthorizedException("Invalid credentials please try again!");
+		}
+		
 		if(credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
 			throw new NotAuthorizedException("Missing login credentials");
 		}
+
 		User userToFollow = null;
 		// Finds user with username argument and attaches value to userToFollow
 		for (User user : userRepository.findAll()) {
@@ -189,6 +199,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void unfollowUserByUsername(String username, Credentials credentials) {
+		
+		if (credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new NotAuthorizedException("Invalid credentials please try again!");
+		}
+		
+		
 		User userToUnfollow = null;
 		// Finds user with username argument and attaches value to userToUnfollow
 		for (User user : userRepository.findAll()) {
@@ -246,26 +262,25 @@ public class UserServiceImpl implements UserService {
 	public List<UserResponseDto> getAllFollowers(String username) {
 		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
 
-		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
-			User userInDB = userInDBOptional.get();
-			List<User> followers = userRepository.findByFollowersAndDeletedFalse(userInDB);
-			return userMapper.entitiesToDtos(followers);
-		} else {
+		if (!userInDBOptional.isPresent() || userInDBOptional.get().isDeleted()) {
 			throw new NotFoundException("Username not found!");
-		}
+		} else {
+			User userInDB = userInDBOptional.get();
+			return userMapper.entitiesToDtos(userInDB.getFollowers());
+		}	
+
 	}
 
 	@Override
 	public List<UserResponseDto> getAllFollowing(String username) {
 		Optional<User> userInDBOptional = userRepository.findByCredentialsUsername(username);
 
-		if (userInDBOptional.isPresent() && !userInDBOptional.get().isDeleted()) {
-			User userInDB = userInDBOptional.get();
-			List<User> following = userRepository.findByFollowingAndDeletedFalse(userInDB);
-			return userMapper.entitiesToDtos(following);
-		} else {
+		if (!userInDBOptional.isPresent() || userInDBOptional.get().isDeleted()) {
 			throw new NotFoundException("Username not found!");
-		}
+		} else {		
+			User userInDB = userInDBOptional.get();
+			return userMapper.entitiesToDtos(userInDB.getFollowing());
+		} 
 	}
 
 
@@ -273,8 +288,8 @@ public class UserServiceImpl implements UserService {
 	public List<TweetResponseDto> getAllTweetsByUsername(String username) {
 		Optional<User> userToFind = userRepository.findByCredentialsUsername(username);
 
-		if ( userToFind.equals(null) || userToFind.get().isDeleted()) {
-		throw new NotFoundException("No user found with that username");
+		if ( !userToFind.isPresent() || userToFind.get().isDeleted()) {
+			throw new NotFoundException("No user found with that username");
 		}
 		else {
 			User user = userToFind.get();
@@ -283,25 +298,70 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseDto updateUsername(String username, CredentialsDto credentialsDto, ProfileDto profileDto) {
+	public UserResponseDto updateUsername(String username, UserRequestDto userRequestDto) {
+		
+		Credentials credentials = credentialsMapper.dtoToEntity(userRequestDto.getCredentials());
+		Profile profile = profileMapper.dtoToEntity(userRequestDto.getProfile());
+
+		if (credentials == null || credentials.getUsername() == null || credentials.getUsername() == null) {
+			throw new NotAuthorizedException("Invalid credentials please try again!");
+		}
+		
+		if (profile == null) {
+			throw new NotAuthorizedException("Invalid profile!");
+		}
+		
 		Optional<User> userInDbOptional = userRepository.findByCredentialsUsername(username);
-		if (userInDbOptional.equals(null)) {
+		
+		
+		if (!userInDbOptional.isPresent()) {
 			throw new NotFoundException("Username not found");
 		}
 		else if (userInDbOptional.get().isDeleted()) {
 			throw new NotFoundException("User has been deleted");
 		}
-//		if (!userInDbOptional.get().getCredentials()) {
-//			throw new NotAuthorizedException("Wrong credentials please try again");
-//		}
-		credentialsDto.setUsername(credentialsDto.getUsername());
-		credentialsDto.setPassword(credentialsDto.getPassword());
+
+		if (!credentials.equals(userInDbOptional.get().getCredentials())) {
+			throw new NotAuthorizedException("Credentials don't match!");
+		}
+
 		
-		profileDto.setEmail(profileDto.getEmail());
-		profileDto.setFirstName(profileDto.getFirstName());
-		profileDto.setLastName(profileDto.getLastName());
-		profileDto.setPhone(profileDto.getPhone());
+		User userInDB = userInDbOptional.get();
 		
-		return userMapper.entityToDtos(username, credentialsDto, profileDto);
+		
+		if (profile.getEmail() != null) {
+			userInDB.setProfile(profile);	
+		}
+		User savedUser = userRepository.saveAndFlush(userInDB);
+		return userMapper.entityToDto(savedUser);
+
+	}
+
+	@Override
+	public List<TweetResponseDto> getFeedByUsername(String username) {
+		List<Tweet> matchedTweets = new ArrayList<>();
+		User matchedUser = null;
+		for(User user : userRepository.findAll()) {
+			if(user.getCredentials().getUsername().equals(username) && !user.isDeleted()) {
+				matchedUser = user;
+			}
+		}
+		if(matchedUser == null) {
+			throw new BadRequestException("No active user found");
+		}
+		for(Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
+			if(tweet.getAuthor().getCredentials().getUsername().equals(matchedUser.getCredentials().getUsername())) {
+				matchedTweets.add(tweet);
+			}
+		}
+		for(User user : matchedUser.getFollowers()) {
+			for(Tweet tweet : user.getTweets()) {
+				if(!tweet.getDeleted()) {
+					matchedTweets.add(tweet);
+				}
+			}
+		}
+		matchedTweets.sort(Comparator.comparing(Tweet::getPosted).reversed());
+		return tweetMapper.entitiesToDtos(matchedTweets);
 	}
 }

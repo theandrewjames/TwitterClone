@@ -18,6 +18,7 @@ import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
+import com.cooksys.socialmedia.entity.Profile;
 import com.cooksys.socialmedia.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,8 +45,8 @@ public class UserController {
 	}
 
 	@PatchMapping("/@{username}")
-	public UserResponseDto updateUsername(@PathVariable String username, @RequestBody CredentialsDto credentialsDto, ProfileDto profileDto) {
-		return userService.updateUsername(username, credentialsDto, profileDto);
+	public UserResponseDto updateUsername(@PathVariable String username, @RequestBody UserRequestDto userRequestDto) {
+		return userService.updateUsername(username, userRequestDto);
 	}
 
 	@DeleteMapping("/@{username}")
@@ -74,8 +75,8 @@ public class UserController {
 	}
 
 	@GetMapping("/@{username}/feed")
-	public TweetResponseDto getFeedByUsername(@PathVariable String username) {
-		return null;
+	public List <TweetResponseDto> getFeedByUsername(@PathVariable String username) {
+		return userService.getFeedByUsername(username);
 
 	}
 
