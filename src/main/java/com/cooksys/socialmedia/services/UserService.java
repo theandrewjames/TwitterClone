@@ -8,6 +8,7 @@ import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.dto.UserRequestDto;
 import com.cooksys.socialmedia.dto.UserResponseDto;
 import com.cooksys.socialmedia.entity.Credentials;
+import com.cooksys.socialmedia.entity.Profile;
 
 public interface UserService {
 	List<UserResponseDto> getAllUsers();
@@ -30,5 +31,5 @@ public interface UserService {
 
 	List<TweetResponseDto> getAllTweetsByUsername(String username);
 
-	UserResponseDto updateUsername(String username, CredentialsDto credentialsDto, ProfileDto profileDto);
+	UserResponseDto updateUsername(String username, UserRequestDto userRequestDto);
 }
