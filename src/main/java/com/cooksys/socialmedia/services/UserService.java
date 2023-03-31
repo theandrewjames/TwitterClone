@@ -32,4 +32,6 @@ public interface UserService {
 	List<TweetResponseDto> getAllTweetsByUsername(String username);
 
 	UserResponseDto updateUsername(String username, UserRequestDto userRequestDto);
+
+	List<TweetResponseDto> getFeedByUsername(String username);
 }
