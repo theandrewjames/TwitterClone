@@ -137,6 +137,7 @@ public class TweetServiceImpl implements TweetService {
 		likedByUsersList.add(savedUser);
 
 		tweetToBeLiked.setLikedByUsers(likedByUsersList);
+
 		Tweet savedTweet = tweetRepository.saveAndFlush(tweetToBeLiked);
 
 		return tweetMapper.entityToDto(savedTweet);
@@ -316,8 +317,13 @@ public class TweetServiceImpl implements TweetService {
 					tweets.add(tweet);
 				}
 			}
-
-			return userMapper.entitiesToDtos(tweet.getLikedByUsers());			
+			List<User> uniqueUsers = new ArrayList<>();
+			for(User user : tweet.getLikedByUsers()) {
+				if(!uniqueUsers.contains(user)) {
+					uniqueUsers.add(user);
+				}
+			}
+			return userMapper.entitiesToDtos(uniqueUsers);
 			
 		}
 	}
