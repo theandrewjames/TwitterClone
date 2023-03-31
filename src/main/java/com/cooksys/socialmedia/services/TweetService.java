@@ -33,4 +33,6 @@ public interface TweetService  {
 
 	List<UserResponseDto> getLikesById(Long id);
 
+	List<TweetResponseDto> getRepliesById(Long id);
+
 }
