@@ -307,22 +307,20 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<UserResponseDto> getLikesById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
 		else {
-			
-			List<User> users = new ArrayList<>();
+			Tweet tweet = tweetToFind.get();
+
+
+			List<Tweet> tweets = new ArrayList<>();
 			for (User user : userRepository.findAll()) {
 				user.getLikedTweets();
-					users.add(user);
-				
+				if (user.getLikedTweets().equals(tweetToFind)) {
+					tweets.add(tweet);
+				}
 			}
-
-
-			return userMapper.entitiesToDtos(users);			
-
 			List<User> uniqueUsers = new ArrayList<>();
 			for(User user : tweet.getLikedByUsers()) {
 				if(!uniqueUsers.contains(user)) {
@@ -331,9 +329,9 @@ public class TweetServiceImpl implements TweetService {
 			}
 			return userMapper.entitiesToDtos(uniqueUsers);
 
-			
 		}
 	}
+
 
 	@Override
 	public List<TweetResponseDto> getRepliesById(Long id) {
