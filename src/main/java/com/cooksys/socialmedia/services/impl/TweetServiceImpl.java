@@ -228,13 +228,14 @@ public class TweetServiceImpl implements TweetService {
 		for (String word : words) {
 			if (word.startsWith("#")) {
 				// If hashtag already exists in db
-				Hashtag dbHashtag = dbHashtags.get(word);
+				//Hashtag dbHashtag = dbHashtags.get(word);
+				Hashtag dbHashtag = dbHashtags.get(word.substring(1));
 				if (dbHashtag != null) {
 					hashtags.add(dbHashtag);
 				} else {
 					// Create new hashtag
 					Hashtag newHashtag = new Hashtag();
-					newHashtag.setLabel(word);
+					newHashtag.setLabel(word.substring(1));
 					Hashtag savedHashtag = hashtagRepository.saveAndFlush(newHashtag);
 					hashtags.add(savedHashtag);
 				}

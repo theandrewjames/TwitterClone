@@ -40,7 +40,9 @@ public class ValidateServiceImpl implements ValidateService {
 	}
 
 	@Override
+	//public boolean validateTagExistsByLabel(String label) {return hashtagRepository.existsByLabel("#" + label);}
 	public boolean validateTagExistsByLabel(String label) {
-		return hashtagRepository.existsByLabel("#" + label);
+		return hashtagRepository.existsByLabel(label);
 	}
+
 }
