@@ -1,11 +1,9 @@
 package com.cooksys.socialmedia.mapper;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import org.mapstruct.Mapper;
 
-import com.cooksys.socialmedia.dto.ContextDto;
 import com.cooksys.socialmedia.dto.TweetRequestDto;
 import com.cooksys.socialmedia.dto.TweetResponseDto;
 import com.cooksys.socialmedia.entity.Tweet;
@@ -21,9 +19,5 @@ public interface TweetMapper {
 	Tweet dtoToEntity(TweetRequestDto tweetRequestDto);
 
 	List<TweetResponseDto> entitiesToDtos(List<Tweet> tweets);
-
-	TweetResponseDto entityToDto(ContextDto contextDto);
-
-	TweetResponseDto entityToDto(Timestamp posted);
 
 }
