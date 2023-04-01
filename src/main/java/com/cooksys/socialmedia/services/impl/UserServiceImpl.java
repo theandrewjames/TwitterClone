@@ -291,7 +291,14 @@ public class UserServiceImpl implements UserService {
 		}
 		else {
 			User user = userToFind.get();
-			return tweetMapper.entitiesToDtos(user.getTweets());
+			List<Tweet> undeletedTweets = new ArrayList<>();
+			for(Tweet tweet : user.getTweets()) {
+				if(!tweet.getDeleted()) {
+					undeletedTweets.add(tweet);
+				}
+			}
+			undeletedTweets.sort(Comparator.comparing(Tweet::getPosted).reversed());
+			return tweetMapper.entitiesToDtos(undeletedTweets);
 		}
 	}
 
