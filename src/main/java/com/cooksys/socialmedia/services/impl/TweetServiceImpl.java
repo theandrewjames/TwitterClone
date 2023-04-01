@@ -96,7 +96,7 @@ public class TweetServiceImpl implements TweetService {
 
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
 		User validatedUser = validateCredentials(tweetRequestDto.getCredentials());
-		
+
 		if (tweetRequestDto.getContent() == null || tweetRequestDto.getContent().isBlank()) {
 			throw new BadRequestException("Tweet must have some content!");
 		}
@@ -163,20 +163,19 @@ public class TweetServiceImpl implements TweetService {
 		return userMapper.entitiesToDtos(verifiedUsers);
 	}
 
-
 	@Override
 	public TweetResponseDto createReplyById(Long id, TweetRequestDto tweetRequestDto) {
 		User matchedUser = validateCredentials(tweetRequestDto.getCredentials());
 		Tweet tweetToReplyTo = null;
-		for(Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
-			if(tweet.getId() == id) {
+		for (Tweet tweet : tweetRepository.findAllByDeletedFalse()) {
+			if (tweet.getId() == id) {
 				tweetToReplyTo = tweet;
 			}
 		}
-		if(tweetRequestDto.getContent() == null) {
+		if (tweetRequestDto.getContent() == null) {
 			throw new BadRequestException("Content needed for replies");
 		}
-		if(tweetToReplyTo == null) {
+		if (tweetToReplyTo == null) {
 			throw new NotFoundException("no tweet found with this id");
 		}
 		// Tweet
@@ -194,8 +193,6 @@ public class TweetServiceImpl implements TweetService {
 		Tweet savedTweet = tweetRepository.save(tweetToBeSaved);
 		return tweetMapper.entityToDto(savedTweet);
 	}
-
-
 
 	private List<User> extractUserMentions(String content) {
 		List<User> userMentions = new ArrayList<>();
@@ -277,8 +274,7 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
-		}
-		else {
+		} else {
 			Tweet tweet = tweetToFind.get();
 			tweet.setInReplyTo(tweet.getInReplyTo());
 			tweet.setPosted(tweet.getPosted());
@@ -289,51 +285,55 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<HashtagDto> getTagsById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		
+
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No Tweets found with this id");
-		}
-		else {
+		} else {
 			Tweet tweet = tweetToFind.get();
-			return hashtagMapper.entitiesToDtos(tweet.getHashtags());
+			return hashtagMapper.entitiesToDtos(("#" + tweet.getHashtags());
 		}
 	}
 
-	
-	
 	@Override
 	public List<UserResponseDto> getLikesById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
-		}
-		else {
-			
-			List<User> users = new ArrayList<>();
+		} else {
+			Tweet tweet = tweetToFind.get();
+
+			List<Tweet> tweets = new ArrayList<>();
 			for (User user : userRepository.findAll()) {
 				user.getLikedTweets();
-					users.add(user);
-				
+				if (user.getLikedTweets().equals(tweetToFind)) {
+					tweets.add(tweet);
+				}
 			}
 
-			return userMapper.entitiesToDtos(users);			
-			
+			return userMapper.entitiesToDtos(users);
+
+			List<User> uniqueUsers = new ArrayList<>();
+			for (User user : tweet.getLikedByUsers()) {
+				if (!uniqueUsers.contains(user)) {
+					uniqueUsers.add(user);
+				}
+			}
+			return userMapper.entitiesToDtos(uniqueUsers);
+
 		}
 	}
 
 	@Override
 	public List<TweetResponseDto> getRepliesById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		
+
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
-		}
-		else {
+		} else {
 			Tweet tweet = tweetToFind.get();
-			
-			return tweetMapper.entitiesToDtos(tweet.getReplies());			
-			
+
+			return tweetMapper.entitiesToDtos(tweet.getReplies());
+
 		}
 	}
 
@@ -341,16 +341,15 @@ public class TweetServiceImpl implements TweetService {
 	public TweetResponseDto createRepostById(Long id, CredentialsDto credentialsDto) {
 		User user = validateCredentials(credentialsDto);
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		
+
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweet found to repot");
 		}
-		
+
 		Tweet tweetToRepost = tweetToFind.get();
 		User savedUser = userRepository.saveAndFlush(user);
-		
+
 		return tweetMapper.entityToDto(tweetToRepost);
 	}
-
 
 }
