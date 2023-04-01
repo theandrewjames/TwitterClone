@@ -25,7 +25,7 @@ public interface TweetService  {
 
 	List<UserResponseDto> getUsersMentionedInTweet(Long id);
 
-	TweetResponseDto getTweetContextById(Long id);
+	ContextDto getTweetContextById(Long id);
 
 	TweetResponseDto createReplyById(Long id, TweetRequestDto tweetRequestDto);
 

@@ -273,19 +273,32 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public TweetResponseDto getTweetContextById(Long id) {
+	public ContextDto getTweetContextById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
 		else {
 			Tweet tweet = tweetToFind.get();
-			//tweet.setInReplyTo(tweet.getInReplyTo());
-//			ContextDto contextDto = null;
-//			contextDto.setTarget(contextDto.getTarget());
-//			contextDto.setBefore(contextDto.getBefore());
-//			contextDto.setAfter(contextDto.getAfter());
-			return tweetMapper.entityToDto(tweet);
+			List<Tweet> beforeTweets = new ArrayList<>();
+			List<Tweet> afterTweets = new ArrayList<>();
+			while(tweet.getInReplyTo() != null) {
+				tweet = tweet.getInReplyTo();
+				if(!tweet.getDeleted()) {
+					beforeTweets.add(tweet);
+				}
+			}
+			tweet = tweetToFind.get();
+			for(Tweet tweet1 : tweet.getReplies()) {
+				if(!tweet1.getDeleted()) {
+					afterTweets.add(tweet);
+				}
+			}
+			ContextDto contextDto = new ContextDto();
+			contextDto.setTarget(tweetMapper.entityToDto(tweet));
+			contextDto.setBefore(tweetMapper.entitiesToDtos(beforeTweets));
+			contextDto.setAfter(tweetMapper.entitiesToDtos(afterTweets));
+			return contextDto;
 		}
 	}
 
