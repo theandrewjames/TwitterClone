@@ -291,7 +291,7 @@ public class TweetServiceImpl implements TweetService {
 			throw new NotFoundException("No Tweets found with this id");
 		} else {
 			Tweet tweet = tweetToFind.get();
-			return hashtagMapper.entitiesToDtos(("#" + tweet.getHashtags());
+			return hashtagMapper.entitiesToDtos(tweet.getHashtags());
 		}
 	}
 
@@ -300,8 +300,10 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
-		} else {
+		}
+		else {
 			Tweet tweet = tweetToFind.get();
+
 
 			List<Tweet> tweets = new ArrayList<>();
 			for (User user : userRepository.findAll()) {
@@ -310,12 +312,9 @@ public class TweetServiceImpl implements TweetService {
 					tweets.add(tweet);
 				}
 			}
-
-			return userMapper.entitiesToDtos(users);
-
 			List<User> uniqueUsers = new ArrayList<>();
-			for (User user : tweet.getLikedByUsers()) {
-				if (!uniqueUsers.contains(user)) {
+			for(User user : tweet.getLikedByUsers()) {
+				if(!uniqueUsers.contains(user)) {
 					uniqueUsers.add(user);
 				}
 			}
@@ -323,6 +322,7 @@ public class TweetServiceImpl implements TweetService {
 
 		}
 	}
+
 
 	@Override
 	public List<TweetResponseDto> getRepliesById(Long id) {
@@ -344,13 +344,13 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
-			throw new NotFoundException("No tweet found to repot");
+			throw new NotFoundException("No tweet found to repost");
 		}
+		Tweet tweetRepost = new Tweet();
+		tweetRepost.setAuthor(user);
+		tweetRepost.setRepostOf(tweetToFind.get());
 
-		Tweet tweetToRepost = tweetToFind.get();
-		User savedUser = userRepository.saveAndFlush(user);
-
-		return tweetMapper.entityToDto(tweetToRepost);
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweetRepost));
 	}
 
 }
