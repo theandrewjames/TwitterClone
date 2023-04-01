@@ -19,7 +19,5 @@ public interface HashtagMapper {
 
 	List<HashtagDto> entitiesToDto(List<Hashtag> hashtags);
 
-	List<HashtagDto> entitiesToDtos(String string);
-
 
 }
