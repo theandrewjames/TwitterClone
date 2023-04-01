@@ -231,13 +231,13 @@ public class TweetServiceImpl implements TweetService {
 		for (String word : words) {
 			if (word.startsWith("#")) {
 				// If hashtag already exists in db
-				Hashtag dbHashtag = dbHashtags.get(word);
+				Hashtag dbHashtag = dbHashtags.get(word.substring(1));
 				if (dbHashtag != null) {
 					hashtags.add(dbHashtag);
 				} else {
 					// Create new hashtag
 					Hashtag newHashtag = new Hashtag();
-					newHashtag.setLabel(word);
+					newHashtag.setLabel(word.substring(1));
 					Hashtag savedHashtag = hashtagRepository.saveAndFlush(newHashtag);
 					hashtags.add(savedHashtag);
 				}
@@ -307,23 +307,32 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<UserResponseDto> getLikesById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
 		else {
-			
-			List<User> users = new ArrayList<>();
+			Tweet tweet = tweetToFind.get();
+
+
+			List<Tweet> tweets = new ArrayList<>();
 			for (User user : userRepository.findAll()) {
 				user.getLikedTweets();
-					users.add(user);
-				
+				if (user.getLikedTweets().equals(tweetToFind)) {
+					tweets.add(tweet);
+				}
 			}
+			List<User> uniqueUsers = new ArrayList<>();
+			for(User user : tweet.getLikedByUsers()) {
+				if(!uniqueUsers.contains(user)) {
+					uniqueUsers.add(user);
+				}
+			}
+			return userMapper.entitiesToDtos(uniqueUsers);
 
-			return userMapper.entitiesToDtos(users);			
-			
 		}
 	}
+
+
 
 	@Override
 	public List<TweetResponseDto> getRepliesById(Long id) {
@@ -346,13 +355,13 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
-			throw new NotFoundException("No tweet found to repot");
+			throw new NotFoundException("No tweet found to repost");
 		}
-		
-		Tweet tweetToRepost = tweetToFind.get();
-		User savedUser = userRepository.saveAndFlush(user);
-		
-		return tweetMapper.entityToDto(tweetToRepost);
+		Tweet tweetRepost = new Tweet();
+		tweetRepost.setAuthor(user);
+		tweetRepost.setRepostOf(tweetToFind.get());
+
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweetRepost));
 	}
 
 

@@ -285,7 +285,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<TweetResponseDto> getAllTweetsByUsername(String username) {
 		Optional<User> userToFind = userRepository.findByCredentialsUsername(username);
-
+		
 		if ( !userToFind.isPresent() || userToFind.get().isDeleted()) {
 			throw new NotFoundException("No user found with that username");
 		}
