@@ -274,20 +274,24 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public ContextDto getTweetContextById(Long id) {
-//		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-//		if (tweetToFind.equals(null) || tweetToFind.get().getDeleted() == true) {
-//			throw new NotFoundException("No tweets found with this id");
-//		}
-//		else {
-//			Tweet tweet = tweetToFind.get();
-//			return tweetMapper.dtoToEntity(tweet.getInReplyTo().getPosted());
-//		}
-		return null;
+		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
+		if (tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
+			throw new NotFoundException("No tweets found with this id");
+		}
+		else {
+			Tweet tweet = tweetToFind.get();
+			ContextDto contextDto = null;
+			contextDto.setTarget(contextDto.getTarget());
+			contextDto.setBefore(contextDto.getBefore());
+			contextDto.setAfter(contextDto.getAfter());
+			return tweetMapper.dtoToEntity(contextDto);
+		}
 	}
 
 	@Override
 	public List<HashtagDto> getTagsById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
+		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No Tweets found with this id");
 		}
@@ -302,22 +306,20 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<UserResponseDto> getLikesById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
+		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
 		else {
-			Tweet tweet = tweetToFind.get();
 			
-
-			List<Tweet> tweets = new ArrayList<>();
+			List<User> users = new ArrayList<>();
 			for (User user : userRepository.findAll()) {
 				user.getLikedTweets();
-				if (user.getLikedTweets().equals(tweetToFind)) {
-					tweets.add(tweet);
-				}
+					users.add(user);
+				
 			}
 
-			return userMapper.entitiesToDtos(tweet.getLikedByUsers());			
+			return userMapper.entitiesToDtos(users);			
 			
 		}
 	}
