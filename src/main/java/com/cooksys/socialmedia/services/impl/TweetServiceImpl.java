@@ -137,7 +137,6 @@ public class TweetServiceImpl implements TweetService {
 		likedByUsersList.add(savedUser);
 
 		tweetToBeLiked.setLikedByUsers(likedByUsersList);
-
 		Tweet savedTweet = tweetRepository.saveAndFlush(tweetToBeLiked);
 
 		return tweetMapper.entityToDto(savedTweet);
@@ -274,18 +273,16 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public ContextDto getTweetContextById(Long id) {
+	public TweetResponseDto getTweetContextById(Long id) {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
-		if (tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
+		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
 			throw new NotFoundException("No tweets found with this id");
 		}
 		else {
 			Tweet tweet = tweetToFind.get();
-			ContextDto contextDto = null;
-			contextDto.setTarget(contextDto.getTarget());
-			contextDto.setBefore(contextDto.getBefore());
-			contextDto.setAfter(contextDto.getAfter());
-			return tweetMapper.dtoToEntity(contextDto);
+			tweet.setInReplyTo(tweet.getInReplyTo());
+			tweet.setPosted(tweet.getPosted());
+			return tweetMapper.entityToDto(tweet);
 		}
 	}
 
@@ -320,17 +317,7 @@ public class TweetServiceImpl implements TweetService {
 				
 			}
 
-
 			return userMapper.entitiesToDtos(users);			
-
-			List<User> uniqueUsers = new ArrayList<>();
-			for(User user : tweet.getLikedByUsers()) {
-				if(!uniqueUsers.contains(user)) {
-					uniqueUsers.add(user);
-				}
-			}
-			return userMapper.entitiesToDtos(uniqueUsers);
-
 			
 		}
 	}
@@ -356,14 +343,13 @@ public class TweetServiceImpl implements TweetService {
 		Optional<Tweet> tweetToFind = tweetRepository.findById(id);
 		
 		if (!tweetToFind.isPresent() || tweetToFind.get().getDeleted() == true) {
-			throw new NotFoundException("No tweet found to repost");
+			throw new NotFoundException("No tweet found to repot");
 		}
 		
-		Tweet tweetRepost = new Tweet();
-		tweetRepost.setAuthor(user);
-		tweetRepost.setRepostOf(tweetToFind.get());
-
-		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweetRepost));
+		Tweet tweetToRepost = tweetToFind.get();
+		User savedUser = userRepository.saveAndFlush(user);
+		
+		return tweetMapper.entityToDto(tweetToRepost);
 	}
 
 
