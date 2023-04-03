@@ -291,7 +291,7 @@ public class TweetServiceImpl implements TweetService {
 			tweet = tweetToFind.get();
 			for(Tweet tweet1 : tweet.getReplies()) {
 				if(!tweet1.getDeleted()) {
-					afterTweets.add(tweet);
+					afterTweets.add(tweet1);
 				}
 			}
 			ContextDto contextDto = new ContextDto();
