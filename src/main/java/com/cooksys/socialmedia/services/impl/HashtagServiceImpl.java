@@ -30,13 +30,7 @@ public class HashtagServiceImpl implements HashtagService {
 	@Override
 	public List<HashtagDto> getAllTags() {
 		List<Hashtag> hashtags = hashtagRepository.findAll();
-		
-		for(Hashtag hashtag : hashtags) {
-			hashtag.setLabel(hashtag.getLabel().substring(1));
-		}
-		
 		return hashtagMapper.entitiesToDtos(hashtags);
-
 	}
 
 	@Override
